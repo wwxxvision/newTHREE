@@ -1,6 +1,8 @@
 const fs = require('fs');
 const stream = fs.createWriteStream("./.env");
+
 console.log(`SET ENVORIMENT: ${process.argv[2]}`);
+
 stream.once('open', function() {
   switch (process.argv[2]) {
     case 'NODE_ENV=development':
