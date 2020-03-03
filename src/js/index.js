@@ -1,7 +1,6 @@
 //~~~~~~~ IMPORTS ~~~~~~~//
 import TWEEN from 'tween.js';
 import * as THREE from 'three';
-import { binding } from './utils';
 import '../styles/index.scss';
 import config from './config';
 
