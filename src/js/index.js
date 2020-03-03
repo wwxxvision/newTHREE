@@ -1,29 +1,45 @@
 //~~~~~~~ IMPORTS ~~~~~~~//
 import TWEEN from 'tween.js';
 import * as THREE from 'three';
-
-import './utils';
+import { binding } from './utils';
 import '../styles/index.scss';
+import config from './config';
+
 
 
 //~~~~~~~ APP ~~~~~~~//
 try {
-  const app = {
-    scene: new THREE.Scene(),
-    camera: new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000),
-    renderer: new THREE.WebGLRenderer(),
-    render: function () {
-      app.renderer.setSize(window.innerWidth, window.innerHeight);
-      document.body.appendChild(app.renderer.domElement);
-    },
-    animate: function () {
-      requestAnimationFrame(app.animate);
-      app.renderer.render(app.scene, app.camera);
+  class Scene {
+
+    constructor() {
+      this.scene = new THREE.Scene();
+      this.camera = new THREE.PerspectiveCamera(config.camera.fov, config.camera.aspect, config.camera.near, config.camera.far);
+      this.renderer = new THREE.WebGLRenderer();
+
+      this.render = this.render.bind(this);
+      this.animate = this.animate.bind(this);
     }
+
+    render() {
+      this.renderer.setPixelRatio(window.devicePixelRatio);
+      this.renderer.setSize(window.innerWidth, window.innerHeight);
+      config.render.domElement.appendChild(this.renderer.domElement);
+    }
+
+    animate() {
+      requestAnimationFrame(this.animate);
+      this.renderer.render(this.scene, this.camera);
+    }
+
+    initial() {
+      this.render();
+      this.animate();
+    }
+
   }
 
-  app.render();
-  app.animate();
+  let scene = new Scene();
+  scene.initial();
 }
 
 catch (err) {
