@@ -3,12 +3,13 @@ import '../styles/index.scss';
 import Scene from './models/scene';
 import config from './config';
 import TWEEN from 'tween.js';
-import * as THREE from 'three';
+
 
 //~~~~~~~ APP ~~~~~~~//
 try {
 
-  let scene = new Scene(THREE, config);
+  let scene = new Scene(config);
+
   scene.render();
 }
 

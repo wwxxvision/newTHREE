@@ -1,12 +1,12 @@
+import * as THREE from 'three';
 
 export default class Scene {
-  constructor(THREE, config) {
-    this.THREE = THREE;
+  constructor(config) {
+    this.scene = new THREE.Scene();
     this.config = config;
-    this.scene = new this.THREE.Scene();
-    this.camera = new this.THREE.PerspectiveCamera(this.config.camera.fov, this.config.camera.aspect, 
+    this.camera = new THREE.PerspectiveCamera(this.config.camera.fov, this.config.camera.aspect, 
       this.config.camera.near, this.config.camera.far);
-    this.renderer = new this.THREE.WebGLRenderer();
+    this.renderer = new THREE.WebGLRenderer();
     this.domElement = this.config.render.domElement;
     this.renderer.setPixelRatio(window.devicePixelRatio);
     this.renderer.setSize(window.innerWidth, window.innerHeight);
