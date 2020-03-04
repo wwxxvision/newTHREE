@@ -1,16 +1,42 @@
 //~~~~~~~ IMPORTS ~~~~~~~//
 import '../styles/index.scss';
 import Scene from './models/scene';
+import User from './models/user';
+import Room from './models/room';
 import config from './config';
 import TWEEN from 'tween.js';
+import App from './models/app';
 
 
 //~~~~~~~ APP ~~~~~~~//
 try {
 
-  let scene = new Scene(config);
-
+  let user = new User(localStorage), scene = new Scene(config);
   scene.render();
+  
+  let app = new App(scene, user.placement);
+
+  app.initApp();
+
+
+
+  // , app = new App(scene, user.placement);
+
+  //description App
+
+  // let activeRoom = new Room('active'),
+  //   hiddenRoom = new Room('hidden');
+
+
+
+
+
+  // app.initApp();
+
+
+
+
+
 }
 
 catch (err) {

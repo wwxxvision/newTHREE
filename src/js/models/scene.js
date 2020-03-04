@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 
+
 export default class Scene {
   constructor(config) {
     this.scene = new THREE.Scene(); //Create instance Scene 
@@ -12,9 +13,11 @@ export default class Scene {
     this.renderer.setSize(window.innerWidth, window.innerHeight);
     this.domElement.appendChild(this.renderer.domElement);
 
+
     this.render = this.render.bind(this);
   }
-
+  
+  
   render() {
     requestAnimationFrame(this.render);
     this.renderer.render(this.scene, this.camera);

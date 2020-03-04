@@ -23,9 +23,10 @@ const optimization = () => {
 require('dotenv').config();
 
 let isDEV = process.env.NODE_ENV === 'development' ? true : false;
+require('babel-polyfill');
 
 module.exports = {
-  entry: './src/js/index.js',
+  entry: ['babel-polyfill',  './src/js/index.js'],
   watch: true,
   mode: process.env.NODE_ENV,
   output: {
@@ -83,6 +84,9 @@ module.exports = {
         use: [
           {
             loader: 'file-loader',
+            options: {
+              name: '[path][name].[ext]'
+            }
           },
         ],
       },
