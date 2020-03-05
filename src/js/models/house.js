@@ -12,14 +12,7 @@ export default class House {
   }
 
   selectRoom(selectingRoom) {
-    let detected = this.rooms.find(room => room.name === selectingRoom.name);
-
-    if (detected.length > 0) {
-      return detected;
-    }
-
-    console.warn('Not found room');
-    return [];
+    return  this.rooms.find(room => room.name === selectingRoom.name && room.subName === selectingRoom.subName);
   }
 
 }

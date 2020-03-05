@@ -14,19 +14,19 @@ const config = {
       {
         name: "bedroom",
         subName: "a",
+        src: "./assets/bedroom_a.jpg",
         position: {
           "x": 0,
           "y": 0,
           "z": 0
         },
-        order: 0,
         buttons: [
           {
-            x: 10,
+            x: 0,
             y: 0,
-            z: 0,
+            z: -10,
             direction: {
-              name: "bdrm",
+              name: "bedroom",
               subName: "b"
             }
           }

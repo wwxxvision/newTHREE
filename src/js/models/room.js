@@ -1,7 +1,7 @@
 import loader from '../utils';
 import Button from './button';
 
-export default class Room extends Model {
+export default class Room  {
   constructor(room, type) {
     this.room = this.validate(room);
     this.instancesOfButton = [];
@@ -38,15 +38,9 @@ export default class Room extends Model {
     this.opacity = newOpacity;
   }
 
-  loadTexture(src) {
-    loader(src)
-      .then(res => this.room.textureUploaded = res)
-      .catch(err => console.error(err));
-  }
-
-  FactoryButtons(buttons) {
-    const buttons = this.room.buttons;
-    buttons.forEach(button => this.instancesOfButton.push(new Button(button)));
+  factoryButtons() {
+    const _buttons = this.room.buttons;
+    _buttons.forEach(button => this.instancesOfButton.push(new Button(button)));
   }
 
   getRoom() {
@@ -59,10 +53,6 @@ export default class Room extends Model {
       height: this.HEIGHT,
       radius: this.RADIUS
     }
-  }
-
-  getTexture() {
-    return this.room.textureUploaded
   }
 
 }

@@ -5,9 +5,9 @@ export default class Button {
     this.z = z;
     this.direction = direction;
     this.rotate = 0;
-    this.WIDTH = 10;
-    this.HEIGHT = 10;
-    this.DEPTH = 10;
+    this.WIDTH = 5;
+    this.HEIGHT = 5;
+    this.DEPTH = 5;
   }
 
   setRotating(newRotate) {
