@@ -7,7 +7,7 @@ export default class Button {
     this.rotate = rotate;
   }
 
-  setRotate(newRotate) {
+  setRotating(newRotate) {
     this.rotate = newRotate;
   }
 
