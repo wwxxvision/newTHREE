@@ -2,27 +2,24 @@ import loader from '../utils';
 import Button from './button';
 
 export default class Room extends Model {
-  constructor(room) {
-    this.__validate = (val, type) => {
-      if (val) {
-        return val;
-      }
-
-      throw new Error('Validate Error');
-    }
-    this.room = this.__validate(rooms);
-    this.instancesOfButtons = [];
+  constructor(room, type) {
+    this.room = this.validate(room);
+    this.instancesOfButton = [];
     this.defaultType = 'hidden';
     this.type = type ? type : this.defaultType;
-    this.setVisibility = (type = this.type) => {
-      if (type === 'hidden') { return false }
-
-      return true;
-    }
-    this.visibility = this.setVisibility();
-    this.opacity = this.visibility ? 1 : 0;
+    this.WIDTH = 60;
+    this.HEIGHT = 40;
+    this.RADIUS = 500;
+    this.opacity = this.type !== 'hidden' ? 1 : 0;
     this.rotate = 0;
+  }
 
+  validate(val) {
+    if (val) {
+      return val;
+    }
+
+    throw new Error('Validate Error');
   }
 
   setType(type) {
@@ -49,10 +46,23 @@ export default class Room extends Model {
 
   FactoryButtons(buttons) {
     const buttons = this.room.buttons;
-    buttons.forEach(button => this.instancesOfButtons.push(new Button(button)));
+    buttons.forEach(button => this.instancesOfButton.push(new Button(button)));
   }
 
   getRoom() {
     return this.room;
   }
+
+  getSize() {
+    return {
+      width: this.WIDTH,
+      height: this.HEIGHT,
+      radius: this.RADIUS
+    }
+  }
+
+  getTexture() {
+    return this.room.textureUploaded
+  }
+
 }

@@ -7,6 +7,7 @@ export default class Button {
     this.rotate = 0;
     this.WIDTH = 10;
     this.HEIGHT = 10;
+    this.DEPTH = 10;
   }
 
   setRotating(newRotate) {
@@ -22,7 +23,7 @@ export default class Button {
 
     console.error('The bad key, must be: x, y, z');
   }
-
+  
   getDirection() {
     return this.direction;
   }
@@ -34,7 +35,8 @@ export default class Button {
   getSize() {
     return {
       width: this.WIDTH,
-      height: this.HEIGHT
+      height: this.HEIGHT,
+      depth: this.DEPTH
     }
   }
 
