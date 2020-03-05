@@ -19,7 +19,7 @@ export default class Room extends Model {
   }
 
   getRoom() {
-    return this.state;
+    this.action('getRoom', this.state );
   }
 
 }

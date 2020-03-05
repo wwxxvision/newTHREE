@@ -20,6 +20,5 @@ export default class House extends Model {
 
   initRoom() {
     this.action('initRoom', this.currentRoom );
-    return this.currentRoom;
   }
 }

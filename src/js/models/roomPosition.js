@@ -11,6 +11,6 @@ export default class RoomPosition extends Model {
   }
   
   getButtons() {
-    return this.state.buttons;
+    this.action('getButtons', this.state.buttons);
   }
 }
