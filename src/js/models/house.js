@@ -1,24 +1,25 @@
-import Model from "./model";
-import config from '../config';
+export default class House  {
+  constructor(rooms) {
+    this.__validate = (val) => {
+      if (Array.isArray(val) && val.length > 0) {
+        return val;
+      }
 
-
-export default class House extends Model {
-  constructor(name, props) {
-    this.name = name;
-    this.props = props;
-    this.type = 'House';
-    this.rooms = config.app;
-    this.defaultRoom = config.app[0];
-    this.currentRoom = this.defaultRoom;
+      throw new Error('Validate Error');
+    }
+    this.rooms = this.__validate(rooms); 
   }
   
-  selectRoom(roomSelecting) {
-    let detected = this.rooms.find(room => roomSelecting);
-    this.currentRoom = this.detected;
-    this.action('selectedRoom', this.currentRoom );
+  selectRoom(selectingRoom) {
+    let detected = this.rooms.find(room => room.name === selectingRoom.name);
+    
+    if (detected.length) {
+      return detected;
+    }
+
+    console.warn('Not found room');
+    return [];
   }
 
-  initRoom() {
-    this.action('initRoom', this.currentRoom );
-  }
+
 }

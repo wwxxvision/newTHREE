@@ -12,7 +12,7 @@ const config = {
   app:
     [
       {
-        name: "bdrm",
+        name: "bedroom",
         subName: "a",
         position: {
           "x": 0,

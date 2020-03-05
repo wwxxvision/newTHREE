@@ -1,25 +1,52 @@
+import loader from '../utils';
+import Button from './button';
 
 export default class Room extends Model {
-  constructor(name, props) {
-    this.name = name;
-    this.props = props;
-    this.type = 'Room';
-    this.defaultType = 'hidden';
-    this.state = {
-      type: this.props.type,
-      name: this.props.name,
-      order: this.props.order,
-      position: this.props.position
+  constructor(room) {
+    this.__validate = (val, type) => {
+      if (val) {
+        return val;
+      }
+
+      throw new Error('Validate Error');
     }
+    this.room = this.__validate(rooms);
+    this.instancesOfButtons = [];
+    this.defaultType = 'hidden';
+    this.type = type ? type : this.defaultType;
+    this.setVisibility = (type = this.type) => {
+      if (type === 'hidden') { return false } 
+
+      return true;
+    }
+    this.visibility = this.setVisibility();
+
   }
-  
+
   setType(type) {
-    this.state.type = type;
-    this.action('changeType', this.state.type );
+    this.type = type;
+  }
+
+  setPosition(newPosiiton) {
+    this.room.position = newPosiiton;
+  }
+
+  setRotating(newRotate) {
+    this.room.rotate = newRotate;
+  }
+
+  loadTexture(src) {
+    loader(src)
+      .then(res => this.room.textureUploaded = res)
+      .catch(err => console.error(err));
+  }
+
+  FactoryButtons(buttons) {
+    const buttons = this.room.buttons;
+    buttons.forEach(button => this.instancesOfButtons.push(new Button(button)));
   }
 
   getRoom() {
-    this.action('getRoom', this.state );
+    return this.room;
   }
-
 }
