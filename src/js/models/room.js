@@ -15,11 +15,13 @@ export default class Room extends Model {
     this.defaultType = 'hidden';
     this.type = type ? type : this.defaultType;
     this.setVisibility = (type = this.type) => {
-      if (type === 'hidden') { return false } 
+      if (type === 'hidden') { return false }
 
       return true;
     }
     this.visibility = this.setVisibility();
+    this.opacity = this.visibility ? 1 : 0;
+    this.rotate = 0;
 
   }
 
@@ -32,7 +34,11 @@ export default class Room extends Model {
   }
 
   setRotating(newRotate) {
-    this.room.rotate = newRotate;
+    this.rotate = newRotate;
+  }
+
+  setOpacity(newOpacity) {
+    this.opacity = newOpacity;
   }
 
   loadTexture(src) {

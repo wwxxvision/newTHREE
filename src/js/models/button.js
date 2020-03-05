@@ -1,10 +1,12 @@
 export default class Button {
-  constructor({ x, y, z, direction, rotate }) {
+  constructor({ x, y, z, direction }) {
     this.x = x;
     this.y = y;
     this.z = z;
     this.direction = direction;
-    this.rotate = rotate;
+    this.rotate = 0;
+    this.WIDTH = 10;
+    this.HEIGHT = 10;
   }
 
   setRotating(newRotate) {
@@ -27,6 +29,13 @@ export default class Button {
 
   getPositon() {
     return { x: this.x, y: this.y, z: this.z }
+  }
+
+  getSize() {
+    return {
+      width: this.WIDTH,
+      height: this.HEIGHT
+    }
   }
 
 }
