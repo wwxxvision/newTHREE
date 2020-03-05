@@ -9,60 +9,58 @@ const config = {
     fov: 75,
     aspect: window.innerWidth / window.innerHeight
   },
-  app: {
-    data: [
+  app:
+    [
       {
-        id: 0,
         name: "bdrm",
-        routes: [
+        subName: "a",
+        position: {
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        order: 0,
+        buttons: [
           {
-            id: 0,
-            name: "a",
-            position: {
-              "x": 0,
-              "y": 0,
-              "z": 0
-            },
-            hasNext: true,
-            hasPrev: false,
-          },
-          {
-            id: 1,
-            name: "b",
-            position: {
-              x: 0,
-              y: 0,
-              z: 0
-            },
-            hasNext: true,
-            hasPrev: false
-          },
-          {
-            id: 2,
-            name: "c",
-            position: {
-              "x": 0,
-              "y": 0,
-              "z": 0
-            },
-            hasNext: true,
-            hasPrev: false
-          },
-          {
-            id: 3,
-            name: "d",
-            position: {
-              x: 0,
-              y: 0,
-              z: 0
-            },
-            "hasNext": true,
-            "hasPrev": false
+            x: 10,
+            y: 0,
+            z: 0,
+            direction: {
+              name: "bdrm",
+              subName: "b"
+            }
           }
         ]
       }
     ]
-  }
 }
 
 export default config;
+
+// {
+//   id: 1,
+//   name: "b",
+//   position: {
+//     x: 0,
+//     y: 0,
+//     z: 0
+//   },
+// },
+// {
+//   id: 2,
+//   name: "c",
+//   position: {
+//     "x": 0,
+//     "y": 0,
+//     "z": 0
+//   }
+// },
+// {
+//   id: 3,
+//   name: "d",
+//   position: {
+//     x: 0,
+//     y: 0,
+//     z: 0
+//   }
+// }
