@@ -7,6 +7,7 @@ export default class Button {
     this.WIDTH = 2;
     this.HEIGHT = 2;
     this.DEPTH = 2;
+    this.mesh = {};
   }
 
 }

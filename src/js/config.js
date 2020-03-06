@@ -16,19 +16,20 @@ const config = {
         subName: "a",
         src: "./assets/bedroom_a.jpg",
         rotate: Math.PI / 4,
-        position: {
-          "x": 0,
-          "y": 0,
-          "z": 0
-        },
         buttons: [
           {
             x: 0,
             y: 0,
             z: -10,
+            isBack: false,
             direction: {
               name: "bedroom",
-              subName: "b"
+              subName: "b",
+              position: {
+                "x": 0,
+                "y": 0,
+                "z": -300
+              },
             }
           }
         ]
@@ -38,28 +39,34 @@ const config = {
         subName: "b",
         rotate: Math.PI / 1.4,
         src: "./assets/bedroom_b.jpg",
-        position: {
-          "x": 0,
-          "y": 0,
-          "z": - 300
-        },
         buttons: [
           {
             x: 10,
             y: 0,
             z: -10,
+            isBack: false,
             direction: {
               name: "bedroom",
-              subName: "c"
+              subName: "c",
+              position: {
+                "x": 0,
+                "y": 0,
+                "z": -300
+              },
             }
           },
           {
-            x: 0,
+            x: 10,
             y: 0,
             z: 10,
             direction: {
               name: "bedroom",
-              subName: "a"
+              subName: "a",
+              position: {
+                "x": 0,
+                "y": 0,
+                "z": 300
+              },
             }
           }
         ]
@@ -69,28 +76,69 @@ const config = {
         subName: "c",
         rotate: Math.PI  / 2,
         src: "./assets/bedroom_c.jpg",
-        position: {
-          "x": 0,
-          "y": 0,
-          "z": - 300
-        },
         buttons: [
           {
-            x: 0,
+            x: 10,
             y: 0,
-            z: -10,
+            z: -5,
             direction: {
               name: "bedroom",
-              subName: "d"
+              subName: "d",
+              position: {
+                "x": 300,
+                "y": 0,
+                "z": 0
+              },
             }
           },
           {
-            x: 10,
+            x: 0,
             y: 0,
             z: 10,
             direction: {
               name: "bedroom",
-              subName: "b"
+              subName: "b",
+              position: {
+                "x": 0,
+                "y": 0,
+                "z": 300
+              },
+            }
+          }
+        ]
+      },
+      {
+        name: "bedroom",
+        subName: "d",
+        rotate:  Math.PI / 3    ,
+        src: "./assets/bedroom_d.jpg",
+        buttons: [
+          {
+            x: 10,
+            y: 0,
+            z: -5,
+            direction: {
+              name: "bedroom",
+              subName: "d",
+               position: {
+                "x": -300,
+                "y": 0,
+                "z": 0
+              },
+            }
+          },
+          {
+            x: 0,
+            y: 0,
+            z: 10,
+            direction: {
+              name: "bedroom",
+              subName: "c",
+              position: {
+                "x": 300,
+                "y": 0,
+                "z": 0
+              },
             }
           }
         ]
