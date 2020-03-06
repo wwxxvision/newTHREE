@@ -29,12 +29,13 @@ export default class House {
     let room = new Room(this.selectRoom(this.placement), this.scene);
     room.render();
     this.initialedRoom = room;
+    return room;
   }
 
   move(poses, callback, zCam) {
     this.initialedRoom.removedButtons();
 
-    let _initialedRoom = new Room(this.selectRoom(this.placement), this.scene);
+    let _initialedRoom = this.factoryRoom();
 
     _initialedRoom.render();
 
@@ -68,14 +69,15 @@ export default class House {
         }, 2000
       )
       .onUpdate(() => {
+        _initialedRoom.mesh.material.opacity = _config._visible;
+        this.initialedRoom.mesh.material.opacity = _config.visible;
+
         callback(_initialedRoom.mesh.position);
 
         _initialedRoom.mesh.position.z = _config.zTarg;
         _initialedRoom.mesh.position.x = _config.xTarg;
         _initialedRoom.mesh.position.y = _config.yTarg;
 
-        _initialedRoom.mesh.material.opacity = _config._visible;
-        this.initialedRoom.mesh.material.opacity = _config.visible;
       })
       .onComplete(() => {
         this.initialedRoom.removedRoom();
