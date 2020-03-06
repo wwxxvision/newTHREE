@@ -9,11 +9,11 @@ export default class User {
         : this.reset;
     }
     this.placement = this.getPlacement();
+    this._update = (data) => {
+      this.localStorage.setItem('user-placement', JSON.stringify(data));
+    }
   }
 
-  update(data) {
-    this.localStorage.setItem('user-placement', JSON.stringify(data));
-  }
 
   reset() {
     this.localStorage.setItem('user-placement', this.reset);

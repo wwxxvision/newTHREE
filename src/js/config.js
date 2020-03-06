@@ -15,6 +15,7 @@ const config = {
         name: "bedroom",
         subName: "a",
         src: "./assets/bedroom_a.jpg",
+        rotate: Math.PI / 4,
         position: {
           "x": 0,
           "y": 0,
@@ -35,11 +36,43 @@ const config = {
       {
         name: "bedroom",
         subName: "b",
+        rotate: Math.PI / 1.4,
         src: "./assets/bedroom_b.jpg",
         position: {
           "x": 0,
           "y": 0,
-          "z": 0
+          "z": - 300
+        },
+        buttons: [
+          {
+            x: 10,
+            y: 0,
+            z: -10,
+            direction: {
+              name: "bedroom",
+              subName: "c"
+            }
+          },
+          {
+            x: 0,
+            y: 0,
+            z: 10,
+            direction: {
+              name: "bedroom",
+              subName: "a"
+            }
+          }
+        ]
+      },
+      {
+        name: "bedroom",
+        subName: "c",
+        rotate: Math.PI / 1.4,
+        src: "./assets/bedroom_c.jpg",
+        position: {
+          "x": 0,
+          "y": 0,
+          "z": - 300
         },
         buttons: [
           {
@@ -48,7 +81,16 @@ const config = {
             z: -10,
             direction: {
               name: "bedroom",
-              subName: "a"
+              subName: "d"
+            }
+          },
+          {
+            x: 10,
+            y: 0,
+            z: 10,
+            direction: {
+              name: "bedroom",
+              subName: "b"
             }
           }
         ]

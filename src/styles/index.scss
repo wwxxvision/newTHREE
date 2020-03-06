@@ -26,12 +26,4 @@ body {
   background-image: url('../assets/preloader.gif');
   background-repeat: no-repeat;
   background-position: center center;
-  .bg {
-    position: absolute;
-    background-color: #000;
-    opacity: .7;
-    z-index: 201;
-    height: 100vh;
-    width: 100%;
-  }
 }

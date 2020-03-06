@@ -15,9 +15,12 @@ export default class Creator3d {
   }
 
   createBox(width, height, depth) {
-    const geometry =  new THREE.BoxGeometry(width, height, depth),
-      material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+    const geometry = new THREE.BoxGeometry(width, height, depth),
+      material = new THREE.MeshBasicMaterial({ color: 0x00ff00 }),
+      mesh = new THREE.Mesh(geometry, material);
 
-    return new THREE.Mesh(geometry, material);
+    mesh.name = 'BUTTON';
+
+    return mesh;
   }
 }

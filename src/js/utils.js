@@ -9,6 +9,7 @@ export default async function loader(src) {
 
 export  function dispose3d(scene, arg)  {
   arg.forEach(mesh => {
+    console.log(mesh)
     scene.remove(mesh);
     mesh.material.dispose();
     mesh.geometry.dispose();

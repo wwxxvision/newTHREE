@@ -1,4 +1,3 @@
-import loader from '../utils';
 import Button from './button';
 
 export default class Room  {
@@ -22,41 +21,8 @@ export default class Room  {
     throw new Error('Validate Error');
   }
 
-  setType(type) {
-    this.type = type;
-  }
-
-  setPosition(newPosiiton) {
-    this.room.position = newPosiiton;
-  }
-
-  setRotating(newRotate) {
-    this.rotate = newRotate;
-  }
-
-  setOpacity(newOpacity) {
-    this.opacity = newOpacity;
-  }
-
   factoryButtons() {
     const _buttons = this.room.buttons;
     _buttons.forEach(button => this.instancesOfButton.push(new Button(button)));
   }
-
-  getRoom() {
-    return this.room;
-  }
-
-  update(newData) {
-    this.room = newData;
-  }
-  
-  getSize() {
-    return {
-      width: this.WIDTH,
-      height: this.HEIGHT,
-      radius: this.RADIUS
-    }
-  }
-
 }
