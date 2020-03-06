@@ -31,6 +31,27 @@ const config = {
             }
           }
         ]
+      },
+      {
+        name: "bedroom",
+        subName: "b",
+        src: "./assets/bedroom_b.jpg",
+        position: {
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        buttons: [
+          {
+            x: 0,
+            y: 0,
+            z: -10,
+            direction: {
+              name: "bedroom",
+              subName: "a"
+            }
+          }
+        ]
       }
     ]
 }

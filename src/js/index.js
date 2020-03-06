@@ -3,6 +3,7 @@ import '../styles/index.scss';
 import * as THREE from 'three';
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import Creator3d from './creator3d';
+import { dispose3d } from './utils';
 import config from './config';
 import User from './user';
 import House from './models/house';
@@ -15,8 +16,7 @@ import TWEEN from 'tween.js';
 class App {
   constructor() {
     this.scene = new THREE.Scene(); //Create instance Scene 
-    this.camera = new THREE.PerspectiveCamera(config.camera.fov, config.camera.aspect,
-      config.camera.near, config.camera.far);  //Create Perspective camera
+    this.camera = new THREE.PerspectiveCamera(config.camera.fov, config.camera.aspect, config.camera.near, config.camera.far);  //Create Perspective camera
     this.renderer = new THREE.WebGLRenderer(); // Create instance render
     this.domElement = config.render.domElement;
     this.renderer.setPixelRatio(window.devicePixelRatio);
@@ -25,43 +25,121 @@ class App {
     this.raycaster = new THREE.Raycaster();
     this.mouse = new THREE.Vector2();
     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
-    this.controls.minPolarAngle = 0; // radians
-    this.controls.maxPolarAngle = Math.PI; // radians
+    this.controls.enablePan = false;
     this.camera.position.z = 5;
     this.user = new User(localStorage);
+    this.controls.target = new THREE.Vector3(0, 0, 0);
   }
+  
   init() {
+    const preloader = document.querySelector('.preloader');
+
+    let setPreloader = function (type) {
+      preloader.style.display = type;
+    }
+
+
     let house = new House(config.app),
+      currentPlace = typeof this.user.placement === 'string' ? JSON.parse(this.user.placement) : this.user.placement,
       creator3d = new Creator3d(),
-      roomData = house.selectRoom(this.user.placement),
-      activeRoom = new Room(roomData, 'active'),
-      hiddenRoom = new Room(roomData, 'hidden');
+      scene = this.scene;
 
-    let activeMesh = creator3d.createSphere(activeRoom.RADIUS, activeRoom.WIDTH,
-      activeRoom.HEIGHT, new THREE.TextureLoader().load(activeRoom.room.src)),
-      hiddenMesh = creator3d.createSphere(hiddenRoom.RADIUS, hiddenRoom.WIDTH,
-        hiddenRoom.HEIGHT, null);
 
-    activeMesh.userData = activeRoom; hiddenMesh.userData = hiddenRoom;
+    class Sphere {
+      constructor(placement, type) {
+        this.data = new Room(house.selectRoom(placement), type);
+        this.mesh = creator3d.createSphere(this.data.RADIUS, this.data.WIDTH, this.data.HEIGHT);
+        this.uploadTexture(this.data.room.src, this.mesh);
+      }
 
-    [activeMesh, hiddenMesh].forEach(mesh => mesh.material.opacity = mesh.userData.opacity);
+      setProp(prop, value) {
+        this.data[prop] = value;
+      }
 
-    activeRoom.factoryButtons();
+      uploadTexture(src, _mesh) {
+        setPreloader('block');
 
-    let buttons = [];
+        new THREE.TextureLoader().load(src,
+          function (texture) {
+            creator3d.setMaterial(_mesh, texture);
+            setPreloader('none');
+          });
+      }
 
-    activeRoom.instancesOfButton.forEach((button, i) => {
-      console.log(button)
-      let mesh = creator3d.createBox(button.WIDTH, button.HEIGHT, button.DEPTH);
-      mesh.userData = { ...button, id: i };
-      mesh.position.x = button.x; mesh.position.y = button.y; mesh.position.z = button.z;
+      move(newPlacement) {
+        let _sphere = new Sphere(newPlacement, 'active');
+        let oldPos = JSON.parse(JSON.stringify(_sphere.mesh.position));
 
-      buttons.push(mesh);
+        scene.add(_sphere.mesh);
 
-      this.scene.add(mesh);
-    });
+        _sphere.mesh.position.z = 1000;
 
-    this.scene.add(activeMesh, hiddenMesh);
+        let _config = {
+          xTarg: _sphere.mesh.position.x,
+          yTarg: _sphere.mesh.position.y,
+          zTarg: _sphere.mesh.position.z
+        }
+
+        let config = {
+          _xTarg: this.mesh.position.x,
+          _yTarg: this.mesh.position.y,
+          _zTarg: this.mesh.position.z
+        }
+
+
+        new TWEEN.Tween(_config)
+          .to(
+            {
+              xTarg: this.mesh.position.x,
+              yTarg: this.mesh.position.y,
+              zTarg: this.mesh.position.z
+            }, 1000
+          )
+          .onUpdate(() => {
+            _sphere.mesh.position.z = _config.zTarg;
+  
+          })
+          .start();
+
+        new TWEEN.Tween(config)
+          .to(
+            {
+              _xTarg: oldPos.x,
+              _yTarg: oldPos.y,
+              _zTarg: oldPos.z
+            }, 1500
+          )
+          .onUpdate(() => {
+            this.mesh.position.z = config._zTarg;
+
+          })
+          .onComplete(() => {
+            dispose3d(scene, [this.mesh]);
+
+            this.data = _sphere.data;
+            this.mesh = _sphere.mesh;
+
+            _sphere = null;
+
+          })
+          .start();
+
+      }
+
+
+    }
+
+    let sphere = new Sphere(currentPlace, 'active');
+    scene.add(sphere.mesh);
+
+
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'q') {
+        let place = { "name": "bedroom", "subName": "b" }
+        sphere.move(place);
+      }
+    })
 
 
   }
@@ -69,7 +147,12 @@ class App {
     requestAnimationFrame(this.render.bind(this));
 
     this.controls.update();
+    this.controls.object.lookAt(this.controls.target)
+
+    console.log(this.controls.target)
+
     this.renderer.render(this.scene, this.camera);
+    TWEEN.update();
   }
 }
 

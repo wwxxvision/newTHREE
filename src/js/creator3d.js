@@ -3,11 +3,15 @@ import * as THREE from 'three';
 export default class Creator3d {
   constructor() { }
 
-  createSphere(radius, width, height, _texture) {
+  createSphere(radius, width, height) {
     const geometry = new THREE.SphereGeometry(radius, width, height),
-      texture = new THREE.MeshBasicMaterial({ map: _texture, side: THREE.DoubleSide, transparent: true });
+      texture = new THREE.MeshBasicMaterial({ map: null, side: THREE.DoubleSide, transparent: true });
 
     return new THREE.Mesh(geometry, texture);
+  }
+
+  setMaterial(mesh, _texture) {
+    mesh.material = new THREE.MeshBasicMaterial({ map: _texture, side: THREE.DoubleSide, transparent: true });
   }
 
   createBox(width, height, depth) {

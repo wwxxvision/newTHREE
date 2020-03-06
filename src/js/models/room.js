@@ -47,6 +47,10 @@ export default class Room  {
     return this.room;
   }
 
+  update(newData) {
+    this.room = newData;
+  }
+  
   getSize() {
     return {
       width: this.WIDTH,

@@ -12,7 +12,7 @@ export default class User {
   }
 
   update(data) {
-    this.localStorage.setItem('user-placement', data);
+    this.localStorage.setItem('user-placement', JSON.stringify(data));
   }
 
   reset() {
