@@ -67,7 +67,7 @@ const config = {
       {
         name: "bedroom",
         subName: "c",
-        rotate: Math.PI / 1.4,
+        rotate: Math.PI  / 2,
         src: "./assets/bedroom_c.jpg",
         position: {
           "x": 0,
