@@ -43,6 +43,7 @@ class App {
       currentPlace = typeof this.user.placement === 'string' ? JSON.parse(this.user.placement) : this.user.placement,
       creator3d = new Creator3d(),
       scene = this.scene;
+  
 
 
     class Sphere {
@@ -149,7 +150,7 @@ class App {
     this.controls.update();
     this.controls.object.lookAt(this.controls.target)
 
-    console.log(this.controls.target)
+    // console.log(this.controls.target)
 
     this.renderer.render(this.scene, this.camera);
     TWEEN.update();
