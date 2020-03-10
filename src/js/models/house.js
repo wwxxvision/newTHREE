@@ -41,7 +41,6 @@ export default class House {
     let _initialedRoom = new Room(this.selectRoom(this.placement), this.scene);
     _initialedRoom.render();
     this.scene.add(_initialedRoom.mesh);
-    
 
     this.setRoomPosition(_initialedRoom.mesh, buttonPos.x, buttonPos.y, buttonPos.z);
     _initialedRoom.mesh.material.opacity = 0.7;
