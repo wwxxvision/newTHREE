@@ -27,38 +27,51 @@ export default class House {
 
   factoryRoom() {
     let room = new Room(this.selectRoom(this.placement), this.scene);
-    room.render();
+    room.render(true);
     this.initialedRoom = room;
-    return room;
   }
 
-  move(poses, callback, zCam) {
+  setRoomPosition(room, x, y , z) {
+    room.position.set(x, y ,z);
+  }
+
+  move(direction, callBackCamTarget, buttonPos, controlTarget, callBackSwitchControls) {
     this.initialedRoom.removedButtons();
 
-    let _initialedRoom = this.factoryRoom();
+    let _initialedRoom = new Room(this.selectRoom(this.placement), this.scene);
 
     _initialedRoom.render();
-
-    this.scene.add(_initialedRoom.mesh);
-
-    _initialedRoom.mesh.position.z = poses.z;
-    _initialedRoom.mesh.position.x = poses.x;
-    _initialedRoom.mesh.position.y = poses.y;
-
+    
+    // this.scene.add(_initialedRoom.mesh);
+    this.setRoomPosition( _initialedRoom.mesh, direction.x ,  direction.y,  direction.z);
     _initialedRoom.mesh.material.opacity = 0.5;
 
     let _config = {
       xTarg: _initialedRoom.mesh.position.x,
       yTarg: _initialedRoom.mesh.position.y,
       zTarg: _initialedRoom.mesh.position.z,
-      _xTarg: this.initialedRoom.mesh.position.x,
-      _yTarg: this.initialedRoom.mesh.position.y,
-      _zTarg: this.initialedRoom.mesh.position.z,
-      visible: 0,
-      _visible: 1
+      visible: 1,
+      _visible: 0
+    },
+    camConfig = {
+      camX: controlTarget.x,
+      camY: controlTarget.y,
+      camZ: controlTarget.z
     }
+    
+    let cameraTween = new TWEEN.Tween(camConfig)
+      .to(
+        {
+          camX: buttonPos.x,
+          camY: buttonPos.y,
+          camZ: buttonPos.z
+        }, 500
+      )
+      .onUpdate(() => {
+        callBackCamTarget({x: camConfig.camX, y: camConfig.camY, z: camConfig.camZ});
+      })
 
-    new TWEEN.Tween(_config)
+    let tweenSpheres = new TWEEN.Tween(_config)
       .to(
         {
           xTarg: 0,
@@ -66,24 +79,30 @@ export default class House {
           zTarg: 0,
           visible: 0,
           _visible: 1
-        }, 2000
+        }, 1000
       )
       .onUpdate(() => {
-        _initialedRoom.mesh.material.opacity = _config._visible;
         this.initialedRoom.mesh.material.opacity = _config.visible;
-
-        callback(_initialedRoom.mesh.position);
-
-        _initialedRoom.mesh.position.z = _config.zTarg;
-        _initialedRoom.mesh.position.x = _config.xTarg;
-        _initialedRoom.mesh.position.y = _config.yTarg;
-
+        // _initialedRoom.mesh.material.opacity = _config._visible;
+        this.setRoomPosition(_initialedRoom.mesh, _config.xTarg, _config.yTarg, _config.zTarg);
       })
       .onComplete(() => {
+        _initialedRoom.factoryButtons();
         this.initialedRoom.removedRoom();
         this.initialedRoom = _initialedRoom;
-      })
-      .start();
+      });
+
+      cameraTween.chain(tweenSpheres);
+
+      cameraTween.start();
   }
 
 }
+// /* 
+
+// 1)Поворот камеры на кнопку с восотой фикс z (0.5с);
+
+// 2)Поставить сферу на поз кнопки , после поворота  
+
+// 3)Движение  1 с 
+

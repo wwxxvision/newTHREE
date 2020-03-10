@@ -102,17 +102,17 @@ export default class Room {
     this.__delete3d([this.mesh]);
   }
 
-  render() {
+  render(isFirstRender) {
     this.setPreloader('block');
 
     this.mesh = this.__createSphere(this.RADIUS, this.WIDTH, this.HEIGHT);
     this.__uploadTexture(this.room.src, this.mesh).then(() => {
-      this.factoryButtons();
+      if (isFirstRender) {
+        this.factoryButtons();
+      }
       this.rotate();
       this.scene.add(this.mesh);
-
       this.setPreloader('none');
-
     });
   }
 
