@@ -10,9 +10,9 @@ import TWEEN from 'tween.js';
 //~~~~~~~ APP ~~~~~~~//
 class App {
   constructor() {
-    this.scene = new THREE.Scene(); //Create instance Scene 
-    this.camera = new THREE.PerspectiveCamera(config.camera.fov, config.camera.aspect, config.camera.near, config.camera.far);  //Create Perspective camera
-    this.renderer = new THREE.WebGLRenderer(); // Create instance render
+    this.scene = new THREE.Scene();
+    this.camera = new THREE.PerspectiveCamera(config.camera.fov, config.camera.aspect, config.camera.near, config.camera.far);
+    this.renderer = new THREE.WebGLRenderer();
     this.domElement = config.render.domElement;
     this.renderer.setPixelRatio(window.devicePixelRatio);
     this.renderer.setSize(window.innerWidth, window.innerHeight);
@@ -31,19 +31,45 @@ class App {
     this.theta = 0;
     this.camera.target = new THREE.Vector3(0, 0, 0);
     this.user = new User(localStorage);
+    this.menuButtons = document.querySelectorAll('.map__point');
+    this.isMoving = false;
   }
 
   updateTrigger({ x, y, z }) {
     this.setTargetPos(x, y, z);
   }
 
-  switchControls(mode) {
+  switchButtons(mode) {
+    this.menuButtons.forEach(button => {
+      if (mode === 'off') {
+        button.classList.add('disabled');
+      }
 
+      else {
+        button.classList.remove('disabled');
+      }
+    })
+  }
+
+  setTab(tabs, house) {
+    tabs.forEach((tab) => {
+      let tabName = tab.dataset.name,
+        tabSubName = tab.dataset.subname;
+
+      if (tabName === house.name && tabSubName === house.subName) {
+        tab.classList.add('active');
+      }
+
+      else {
+        tab.classList.remove('active');
+      }
+    });
   }
 
   onPointerStart(event) {
-
-    this.isUserInteracting = true;
+    if (!this.isMoving) {
+      this.isUserInteracting = true;
+    }
 
     let clientX = event.clientX,
       clientY = event.clientY;
@@ -60,7 +86,6 @@ class App {
   }
 
   onPointerMove(event) {
-
     let clientX = event.clientX,
       clientY = event.clientY;
 
@@ -72,27 +97,23 @@ class App {
       this.lat = Math.max(- 85, Math.min(85, this.lat));
       this.phi = THREE.MathUtils.degToRad(90 - this.lat);
       this.theta = THREE.MathUtils.degToRad(this.lon);
-  
+
       this.setTargetPos((Math.sin(this.phi) * Math.cos(this.theta)), Math.cos(this.phi), (Math.sin(this.phi) * Math.sin(this.theta)));
     }
 
+  }
+
+  findInConfig(name, subName) {
+    return config.app.find(roomFounding => roomFounding.name === name && roomFounding.subName === subName);
   }
 
   onPointerUp() {
     this.isUserInteracting = false;
   }
 
-  cameraUpdate() {
-
-    // this.lat = Math.max(- 85, Math.min(85, this.lat));
-    // this.phi = THREE.MathUtils.degToRad(90 - this.lat);
-    // this.theta = THREE.MathUtils.degToRad(this.lon);
-
-    // this.camera.target.x = 500 * Math.sin(this.phi) * Math.cos(this.theta);
-    // this.camera.target.y = 500 * Math.cos(this.phi);
-    // this.camera.target.z = 500 * Math.sin(this.phi) * Math.sin(this.theta);
-
-
+  disableMoving() {
+    this.isMoving = false;
+    this.switchButtons('on');
   }
 
   init() {
@@ -101,6 +122,7 @@ class App {
     let currentPlace = typeof this.user.placement === 'string' ? JSON.parse(this.user.placement) : this.user.placement,
       house = new House(config.app, currentPlace, this.scene);
 
+    this.setTab(this.menuButtons, house.placement);
     house.factoryRoom();
 
     document.addEventListener('mousedown', this.onPointerStart.bind(this), false);
@@ -121,8 +143,6 @@ class App {
       if (intersects.length) {
         intersects.forEach(intersect => {
           if (intersect.object.name === 'BUTTON') {
-            this.switchControls('off');
-
             let direction = intersect.object.userData.direction,
               buttonPOS = {
                 x: intersect.object.userData.x,
@@ -130,20 +150,40 @@ class App {
                 z: intersect.object.userData.z
               }
 
+
             this.user._update(direction);
 
+            this.isMoving = true;
+            this.switchButtons('off');
             house.updatePlacement(direction);
-            house.move(direction.position, this.updateTrigger.bind(this), buttonPOS, this.camera.target, this.switchControls.bind(this));
-
+            this.setTab(this.menuButtons, house.placement);
+            house.move(this.updateTrigger.bind(this), buttonPOS, this.camera.target, this.disableMoving.bind(this));
           }
         });
       }
-
     });
+
+    this.menuButtons.forEach(button => {
+      button.addEventListener('click', (e) => {
+        if (!e.target.classList.contains('active')) {
+          let direction = this.findInConfig(e.target.dataset.name, e.target.dataset.subname);
+          if (direction) {
+            house.updatePlacement(direction);
+
+            this.setTab(this.menuButtons, house.placement);
+            this.user._update(direction);
+            house.select();
+          }
+
+          else {
+            throw new Error(`Can't find direction in config`);
+          }
+        }
+      });
+    })
   }
 
   render() {
-
     this.camera.lookAt(this.camera.target);
     requestAnimationFrame(this.render.bind(this));
 

@@ -31,34 +31,37 @@ export default class House {
     this.initialedRoom = room;
   }
 
-  setRoomPosition(room, x, y , z) {
-    room.position.set(x, y ,z);
+  setRoomPosition(room, x, y, z) {
+    room.position.set(x, y, z);
   }
 
-  move(direction, callBackCamTarget, buttonPos, controlTarget, callBackSwitchControls) {
+  move(callBackCamTarget, buttonPos, controlTarget, disableMovingCallback) {
     this.initialedRoom.removedButtons();
 
     let _initialedRoom = new Room(this.selectRoom(this.placement), this.scene);
-
     _initialedRoom.render();
+    this.scene.add(_initialedRoom.mesh);
     
-    // this.scene.add(_initialedRoom.mesh);
-    this.setRoomPosition( _initialedRoom.mesh, direction.x ,  direction.y,  direction.z);
-    _initialedRoom.mesh.material.opacity = 0.5;
+
+    this.setRoomPosition(_initialedRoom.mesh, buttonPos.x, buttonPos.y, buttonPos.z);
+    _initialedRoom.mesh.material.opacity = 0.7;
 
     let _config = {
       xTarg: _initialedRoom.mesh.position.x,
       yTarg: _initialedRoom.mesh.position.y,
       zTarg: _initialedRoom.mesh.position.z,
+      _xTarg: this.initialedRoom.mesh.position.x,
+      _yTarg: this.initialedRoom.mesh.position.y,
+      _zTarg: this.initialedRoom.mesh.position.z,
       visible: 1,
       _visible: 0
     },
-    camConfig = {
-      camX: controlTarget.x,
-      camY: controlTarget.y,
-      camZ: controlTarget.z
-    }
-    
+      camConfig = {
+        camX: controlTarget.x,
+        camY: controlTarget.y,
+        camZ: controlTarget.z
+      }
+
     let cameraTween = new TWEEN.Tween(camConfig)
       .to(
         {
@@ -68,7 +71,7 @@ export default class House {
         }, 500
       )
       .onUpdate(() => {
-        callBackCamTarget({x: camConfig.camX, y: camConfig.camY, z: camConfig.camZ});
+        callBackCamTarget({ x: camConfig.camX, y: camConfig.camY, z: camConfig.camZ });
       })
 
     let tweenSpheres = new TWEEN.Tween(_config)
@@ -78,31 +81,38 @@ export default class House {
           yTarg: 0,
           zTarg: 0,
           visible: 0,
-          _visible: 1
-        }, 1000
+          _visible: 1,
+        }, 1500
       )
       .onUpdate(() => {
         this.initialedRoom.mesh.material.opacity = _config.visible;
-        // _initialedRoom.mesh.material.opacity = _config._visible;
+        _initialedRoom.mesh.material.opacity = _config._visible;
         this.setRoomPosition(_initialedRoom.mesh, _config.xTarg, _config.yTarg, _config.zTarg);
       })
       .onComplete(() => {
         _initialedRoom.factoryButtons();
         this.initialedRoom.removedRoom();
         this.initialedRoom = _initialedRoom;
+
+        disableMovingCallback();
       });
 
-      cameraTween.chain(tweenSpheres);
-
-      cameraTween.start();
+    cameraTween.chain(tweenSpheres);
+    tweenSpheres.delay(300);
+    cameraTween.start();
   }
+  select() {
+    this.initialedRoom.removedButtons();
 
+    let _initialedRoom = new Room(this.selectRoom(this.placement), this.scene);
+    _initialedRoom.render(true);
+
+    this.scene.add(_initialedRoom.mesh);
+    
+    this.initialedRoom.removedRoom();
+    this.initialedRoom = _initialedRoom;
+
+  }
 }
-// /* 
 
-// 1)Поворот камеры на кнопку с восотой фикс z (0.5с);
-
-// 2)Поставить сферу на поз кнопки , после поворота  
-
-// 3)Движение  1 с 
 
