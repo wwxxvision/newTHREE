@@ -109,13 +109,13 @@ export default class House {
   select() {
     this.initialedRoom.removedButtons();
 
-    let _initialedRoom = new Room(this.selectRoom(this.placement), this.scene);
-    _initialedRoom.render(true);
+    let hiddenSphere = new Room(this.selectRoom(this.placement), this.scene);
+    hiddenSphere.render(true);
 
-    this.scene.add(_initialedRoom.mesh);
+    this.scene.add(hiddenSphere.mesh);
 
     this.initialedRoom.removedRoom();
-    this.initialedRoom = _initialedRoom;
+    this.initialedRoom = hiddenSphere;
 
   }
 }
