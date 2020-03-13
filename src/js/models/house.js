@@ -67,7 +67,7 @@ export default class House {
             zTarg: 0,
             currentOpacity: 0,
             hiddenOpacity: 1,
-          }, 1200
+          }, 1400
         )
         .easing(TWEEN.Easing.Quadratic.InOut)
         .onStart(() => {
@@ -99,6 +99,7 @@ export default class House {
           updateCameraTarget({x: cameraAnimate.camX, y: cameraAnimate.camY, z: cameraAnimate.camZ});
         })
         .onComplete(() => {
+          tweenSpheres.delay(200);
           tweenSpheres.start();
         })
 
