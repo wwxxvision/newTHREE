@@ -48,8 +48,8 @@ body {
 }
 
 .map {
-  height: 200px;
-  width: 300px;
+  height: 50px;
+  width: 50px;
   @include create_bg('../assets/map.jpg');
   background-size: cover;
   position: absolute;
@@ -58,8 +58,14 @@ body {
   right: $wrapp_padding;
   cursor: pointer;
   visibility: hidden;
+  @extend .animate;
   &.loaded {
     visibility: visible;
+  }
+  &:hover {
+    width: 300px;
+    height: 300px;
+    @extend .animate;
   }
   .content {
     height: 100%;
