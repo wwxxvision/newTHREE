@@ -14,7 +14,6 @@ export default class User {
     }
   }
 
-
   reset() {
     this.localStorage.setItem('user-placement', this.reset);
   }

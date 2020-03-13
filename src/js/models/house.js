@@ -39,7 +39,7 @@ export default class House {
   move(updateCameraTarget, buttonPos, currentCamTargetPos, disableMovingAction) {
     this.initialedRoom.removedButtons();
 
-    let hiddenSphere = new Room(this.selectRoom(this.placement), this.scene);
+    let hiddenSphere = new Room(this.selectRoom(this.placement), this.scene); //initialed new room
 
     hiddenSphere.render().then(() => {
       hiddenSphere.mesh.visible = false;
@@ -50,8 +50,8 @@ export default class House {
         xTarg: hiddenSphere.mesh.position.x,
         yTarg: hiddenSphere.mesh.position.y,
         zTarg: hiddenSphere.mesh.position.z,
-        visible: 1,
-        _visible: 0.6
+        currentOpacity: 1,
+        hiddenOpacity: 0.6
       },
         cameraAnimate = {
           camX: currentCamTargetPos.x,
@@ -65,8 +65,8 @@ export default class House {
             xTarg: 0,
             yTarg: 0,
             zTarg: 0,
-            visible: 0,
-            _visible: 1,
+            currentOpacity: 0,
+            hiddenOpacity: 1,
           }, 1200
         )
         .easing(TWEEN.Easing.Quadratic.InOut)
@@ -75,8 +75,8 @@ export default class House {
         })
         .onUpdate(() => {
           this.setRoomPosition(hiddenSphere.mesh, spheresAnimate.xTarg, spheresAnimate.yTarg, spheresAnimate.zTarg);
-          this.initialedRoom.mesh.material.opacity = spheresAnimate.visible;
-          hiddenSphere.mesh.material.opacity = spheresAnimate._visible;
+          this.initialedRoom.mesh.material.opacity = spheresAnimate.currentOpacity;
+          hiddenSphere.mesh.material.opacity = spheresAnimate.hiddenOpacity;
         })
         .onComplete(() => {
           hiddenSphere.factoryButtons();

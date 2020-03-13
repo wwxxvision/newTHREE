@@ -6,8 +6,7 @@ const config = {
   camera: {
     near: 0.1,
     far: 1000,
-    fov: 75,
-    aspect: window.innerWidth / window.innerHeight
+    fov: 75
   },
   app:
     [
@@ -169,31 +168,3 @@ const config = {
 }
 
 export default config;
-
-// {
-//   id: 1,
-//   name: "b",
-//   position: {
-//     x: 0,
-//     y: 0,
-//     z: 0
-//   },
-// },
-// {
-//   id: 2,
-//   name: "c",
-//   position: {
-//     "x": 0,
-//     "y": 0,
-//     "z": 0
-//   }
-// },
-// {
-//   id: 3,
-//   name: "d",
-//   position: {
-//     x: 0,
-//     y: 0,
-//     z: 0
-//   }
-// }

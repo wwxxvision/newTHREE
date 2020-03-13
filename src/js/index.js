@@ -20,7 +20,7 @@ try {
       this.phi = 0;
       this.theta = 0;
       this.isMoving = false;
-      this.menuButtons = document.querySelectorAll('.map__point');
+      this.mapButtons = document.querySelectorAll('.map__point');
       this.htmlMouse = document.querySelector('.circle');
 
       this.scene = new THREE.Scene();
@@ -41,15 +41,7 @@ try {
     }
 
     switchButtons(mode) {
-      this.menuButtons.forEach(button => {
-        if (mode === 'off') {
-          button.classList.add('disabled');
-        }
-
-        else {
-          button.classList.remove('disabled');
-        }
-      })
+      this.mapButtons.forEach(button => mode === false ? button.classList.add('disabled') : button.classList.remove('disabled'));
     }
 
     setTab(tabs, house) {
@@ -122,7 +114,6 @@ try {
       this.mouse.y = -(clientY / window.innerHeight) * 2 + 1;
       this.mouse.z = 0;
 
-
       this.htmlMouse.style.left = clientX + 'px';
       this.htmlMouse.style.top = clientY + 'px';
     }
@@ -137,7 +128,7 @@ try {
 
     disableMoving() {
       this.isMoving = false;
-      this.switchButtons('on');
+      this.switchButtons(true);
     }
 
     onWindowResize() {
@@ -146,8 +137,8 @@ try {
 
       this.renderer.setSize(window.innerWidth, window.innerHeight);
     }
-    
-    onButton(ev, house) {
+
+    onButton(house) {
       this.raycaster.setFromCamera(this.mouse, this.camera);
       let intersects = this.raycaster.intersectObjects(this.scene.children, true);
 
@@ -163,9 +154,9 @@ try {
             this.user._update(direction);
 
             this.isMoving = true;
-            this.switchButtons('off');
+            this.switchButtons(false);
             house.updatePlacement(direction);
-            this.setTab(this.menuButtons, house.placement);
+            this.setTab(this.mapButtons, house.placement);
             house.move(this.updateTrigger.bind(this), buttonPOS, this.camera.target, this.disableMoving.bind(this));
           }
         });
@@ -179,7 +170,7 @@ try {
         if (direction) {
           house.updatePlacement(direction);
 
-          this.setTab(this.menuButtons, house.placement);
+          this.setTab(this.mapButtons, house.placement);
           this.user._update(direction);
           house.select();
         }
@@ -190,38 +181,37 @@ try {
       }
     }
 
-    init() {
-
-      //~~~~~~~ Logic ~~~~~~~//
-      let currentPlace = typeof this.user.placement === 'string' ? JSON.parse(this.user.placement) : this.user.placement,
-        house = new House(config.app, currentPlace, this.scene);
-
-      this.setTab(this.menuButtons, house.placement); house.factoryRoom();
-
-      document.addEventListener('mousedown', (ev) => this.onPointerStart(ev));
-      document.addEventListener('mousemove', (ev) => this.onPointerMove(ev, house));
-      document.addEventListener('mouseup', (ev) => this.onPointerUp(ev));
-      document.addEventListener('click', (ev) => this.onButton(ev, house));
-      this.menuButtons.forEach(button => button.addEventListener('click', (ev) => this.onTabs(ev, house)));
-
-      document.addEventListener('touchstart', (ev) => this.onPointerStart(ev));
-      document.addEventListener('touchmove', (ev) => this.onPointerMove(ev));
-      document.addEventListener('touchend', (ev) => this.onPointerUp(ev));
-
-      window.addEventListener('resize', () => this.onWindowResize());
-    }
-
     render() {
       this.camera.lookAt(this.camera.target);
       requestAnimationFrame(() => this.render());
       this.renderer.render(this.scene, this.camera);
       TWEEN.update();
     }
+
+    init() {
+      //~~~~~~~ Logic ~~~~~~~//
+      let currentPlace = typeof this.user.placement === 'string' ? JSON.parse(this.user.placement) : this.user.placement,
+        house = new House(config.app, currentPlace, this.scene);
+
+      this.setTab(this.mapButtons, house.placement); house.factoryRoom();
+
+      document.addEventListener('mousedown', (ev) => this.onPointerStart(ev));
+      document.addEventListener('mousemove', (ev) => this.onPointerMove(ev, house));
+      document.addEventListener('mouseup', () => this.onPointerUp());
+      document.addEventListener('click', () => this.onButton(house));
+      this.mapButtons.forEach(button => button.addEventListener('click', (ev) => this.onTabs(ev, house)));
+
+      document.addEventListener('touchstart', (ev) => this.onPointerStart(ev));
+      document.addEventListener('touchmove', (ev) => this.onPointerMove(ev));
+      document.addEventListener('touchend', () => this.onPointerUp());
+
+      window.addEventListener('resize', () => this.onWindowResize());
+
+      this.render();
+    }
   }
 
-  const app = new App();
-
-  app.render(); app.init();
+  new App().init();
 }
 
 catch (err) {

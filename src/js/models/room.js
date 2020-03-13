@@ -88,6 +88,7 @@ export default class Room {
         this.scene.add(mesh)
       });
     }
+    else { console.warn(`Can not create buttons , because (instancesOfButton) is empty`); }
   }
 
   removedButtons() {
