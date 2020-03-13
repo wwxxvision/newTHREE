@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import Button from './button';
 
 export default class Room {
-  constructor(room, scene) {
+  constructor(room, scene, updateQntrn) {
     this.room = this.validate(room);
     this.instancesOfButton = [];
     this.scene = scene;
@@ -12,6 +12,7 @@ export default class Room {
     this.mesh = {};
     this.PRELOADER = document.querySelector('.preloader');
     this.MAP =  document.querySelector('.map');
+    this.updateQntrn = updateQntrn;
   }
 
   validate(val) {
@@ -37,7 +38,7 @@ export default class Room {
   }
 
   rotate() {
-    this.mesh.rotateY(this.room.rotate);
+     this.mesh.rotateY(this.room.rotate);
   }
 
   __createSphere(radius, width, height) {
@@ -110,6 +111,7 @@ export default class Room {
       this.setPreloader(true);
 
       this.mesh = this.__createSphere(this.RADIUS, this.WIDTH, this.HEIGHT);
+
       this.__uploadTexture(this.room.src, this.mesh).then(() => {
 
         if (isFirstRender) {
@@ -121,6 +123,9 @@ export default class Room {
         }
 
         this.rotate();
+        if (this.updateQntrn) {
+          this.updateQntrn.call(this, this.mesh.quaternion);
+        }
         resolve(this.scene.add(this.mesh));
         this.setPreloader(false);
       });

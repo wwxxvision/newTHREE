@@ -32,13 +32,13 @@ try {
       this.domElement.appendChild(this.renderer.domElement);
       this.raycaster = new THREE.Raycaster();
       this.mouse = new THREE.Vector3();
-      this.camera.target = new THREE.Vector3(2, 0, 2);
+      this.camera.target = new THREE.Vector3(1, 0, 0);
       this.user = new User(localStorage);
       this.scene.background = new THREE.Color('0xffffff');
     }
 
     updateTrigger({ x, y, z }) {
-      this.setTargetPos(x, y, z , false);
+      this.setTargetPos(x, y, z, false);
     }
 
     switchButtons(mode) {
@@ -82,7 +82,7 @@ try {
           _y: this.camera.target.y,
           _z: this.camera.target.z
         }
-  
+
         new TWEEN.Tween(animateCamera)
           .to(
             {
@@ -195,13 +195,18 @@ try {
       TWEEN.update();
     }
 
+    targetUpdateQuaternion(quaternion) {
+      this.camera.target.normalize();
+      this.camera.target.applyQuaternion(quaternion);
+    }
+
     init() {
       //~~~~~~~ Logic ~~~~~~~//
       let currentPlace = typeof this.user.placement === 'string' ? JSON.parse(this.user.placement) : this.user.placement,
-        house = new House(config.app, currentPlace, this.scene);
+        house = new House(config.app, currentPlace, this.scene,  this.targetUpdateQuaternion.bind(this));
 
       this.setTab(this.mapButtons, house.placement); house.factoryRoom();
-
+      
       document.addEventListener('mousedown', (ev) => this.onPointerStart(ev));
       document.addEventListener('mousemove', (ev) => this.onPointerMove(ev, house));
       document.addEventListener('mouseup', () => this.onPointerUp());

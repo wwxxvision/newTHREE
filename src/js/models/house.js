@@ -2,11 +2,12 @@ import Room from "./room";
 import TWEEN from 'tween.js';
 
 export default class House {
-  constructor(rooms, placement, scene) {
+  constructor(rooms, placement, scene, updTargetQntrn) {
     this.rooms = this.validate(rooms);
     this.placement = placement;
     this.initialedRoom = {};
     this.scene = scene;
+    this.updTargetQntrn = updTargetQntrn;
   }
 
   validate(val) {
@@ -26,10 +27,9 @@ export default class House {
   }
 
   factoryRoom() {
-    let room = new Room(this.selectRoom(this.placement), this.scene);
+    let room = new Room(this.selectRoom(this.placement), this.scene, this.updTargetQntrn);
     room.render(true);
     this.initialedRoom = room;
-
   }
 
   setRoomPosition(room, x, y, z) {

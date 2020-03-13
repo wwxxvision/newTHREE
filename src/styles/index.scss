@@ -54,7 +54,7 @@ body {
   background-size: cover;
   position: absolute;
   bottom: $wrapp_padding;
-  z-index: 200;
+  z-index: 230;
   right: $wrapp_padding;
   cursor: pointer;
   visibility: hidden;
@@ -70,7 +70,7 @@ body {
     .map__point {
       height: 15px;
       width: 15px;
-      z-index: 205;
+      z-index: 220;
       position: absolute;
       transform: scale(1.1);
       @extend .animate;
