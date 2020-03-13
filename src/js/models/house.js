@@ -99,7 +99,6 @@ export default class House {
           updateCameraTarget({x: cameraAnimate.camX, y: cameraAnimate.camY, z: cameraAnimate.camZ});
         })
         .onComplete(() => {
-          tweenSpheres.delay(200);
           tweenSpheres.start();
         })
 
@@ -111,6 +110,17 @@ export default class House {
 
     let hiddenSphere = new Room(this.selectRoom(this.placement), this.scene);
     hiddenSphere.render(true);
+
+    hiddenSphere.mesh.material.opacity = 0.5;
+
+    let animateOpacity = {
+      hiddenOpacity: 0.5
+    }
+
+    new TWEEN.Tween(animateOpacity)
+      .to({hiddenOpacity: 1}, 1200)
+      .onUpdate(() => hiddenSphere.mesh.material.opacity = animateOpacity.hiddenOpacity)
+      .start();
 
     this.scene.add(hiddenSphere.mesh);
 

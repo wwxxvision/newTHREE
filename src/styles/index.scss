@@ -1,6 +1,20 @@
 $ft_teko: 'Teko', sans-serif;
 $wrapp_padding: 10px;
 
+@keyframes animate_circle {
+  from {
+    transform: scale(0);
+  }25% {
+    transform: scale(1.2);
+  }50% {
+    transform: scale(1.5);
+  }75% {
+    transform: scale(1.2);
+  }to {
+    transform: scale(0);
+  }
+}
+
 @mixin create_bg($url) {
   background: url($url) center center no-repeat;
   background-size: cover;
@@ -12,6 +26,13 @@ $wrapp_padding: 10px;
 }
 
 
+* {box-sizing:  border-box; padding: 0; margin: 0; }
+
+body {
+  overflow: hidden;
+  cursor: none;
+}
+
 .animate {
   transition-duration: 0.2s;
   transition-timing-function: ease-in;
@@ -19,13 +40,6 @@ $wrapp_padding: 10px;
 
 .disabled {
   pointer-events: none;
-}
-
-* {box-sizing:  border-box; padding: 0; margin: 0; }
-
-body {
-  overflow: hidden;
-  cursor: none;
 }
 
 .app {
@@ -86,6 +100,10 @@ body {
   background-image: url('../assets/preloader.gif');
   background-repeat: no-repeat;
   background-position: center center;
+  justify-content: center;
+  align-items: center;
+  font-family: $ft_teko;
+  font-size: 18px;
 }
 
 .circle {
@@ -93,6 +111,20 @@ body {
   width: 10px;
   background-color: #000000;
   border-radius:  50%;
-  z-index:  200;
+  z-index:  205;
   position: absolute;
+  &.loading {
+    &::after {
+      display: block;
+      height: 10px;
+      width: 10px;
+      z-index: 204;
+      background-color: #ff0000;
+      border-radius: 50%;
+      content: '';
+      opacity: 0.6;
+      transform: scale(1.5);
+      animation: animate_circle 0.5s ease-in infinite;
+    }
+  }
 }

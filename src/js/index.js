@@ -32,12 +32,13 @@ try {
       this.domElement.appendChild(this.renderer.domElement);
       this.raycaster = new THREE.Raycaster();
       this.mouse = new THREE.Vector3();
-      this.camera.target = new THREE.Vector3(0, 0, 0);
+      this.camera.target = new THREE.Vector3(2, 0, 2);
       this.user = new User(localStorage);
+      this.scene.background = new THREE.Color('0xffffff');
     }
 
     updateTrigger({ x, y, z }) {
-      this.setTargetPos(x, y, z);
+      this.setTargetPos(x, y, z , false);
     }
 
     switchButtons(mode) {
@@ -74,25 +75,31 @@ try {
       this.onMouseDownLat = this.lat;
     }
 
-    setTargetPos(x, y, z) {
-      let animateCamera = {
-        _x: this.camera.target.x,
-        _y: this.camera.target.y,
-        _z: this.camera.target.z
+    setTargetPos(x, y, z, withAnimate) {
+      if (withAnimate) {
+        let animateCamera = {
+          _x: this.camera.target.x,
+          _y: this.camera.target.y,
+          _z: this.camera.target.z
+        }
+  
+        new TWEEN.Tween(animateCamera)
+          .to(
+            {
+              _x: x,
+              _y: y,
+              _z: z
+            }, 250
+          )
+          .easing(TWEEN.Easing.Quadratic.InOut)
+          .onUpdate(() => {
+            this.camera.target.set(animateCamera._x, animateCamera._y, animateCamera._z);
+          })
+          .start();
       }
-
-      new TWEEN.Tween(animateCamera)
-        .to(
-          {
-            _x: x,
-            _y: y,
-            _z: z
-          }, 500
-        )
-        .onUpdate(() => {
-          this.camera.target.set(animateCamera._x, animateCamera._y, animateCamera._z);
-        })
-        .start();
+      else {
+        this.camera.target.set(x, y, z);
+      }
     }
 
     onPointerMove(ev) {
@@ -107,7 +114,7 @@ try {
         this.phi = THREE.Math.degToRad(90 - this.lat);
         this.theta = THREE.Math.degToRad(this.lon);
 
-        this.setTargetPos((Math.sin(this.phi) * Math.cos(this.theta)), Math.cos(this.phi), (Math.sin(this.phi) * Math.sin(this.theta)));
+        this.setTargetPos((Math.sin(this.phi) * Math.cos(this.theta)), Math.cos(this.phi), (Math.sin(this.phi) * Math.sin(this.theta)), true);
       }
 
       this.mouse.x = (clientX / window.innerWidth) * 2 - 1;

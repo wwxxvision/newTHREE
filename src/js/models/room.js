@@ -23,7 +23,8 @@ export default class Room {
   }
 
   setPreloader(type) {
-    this.PRELOADER.style.display = type;
+    this.PRELOADER.style.display = type ? 'flex' : 'none';
+    type ? document.querySelector('.circle').classList.add('loading') : document.querySelector('.circle').classList.remove('loading');
   }
 
   __delete3d(arg) {
@@ -106,10 +107,11 @@ export default class Room {
 
   render(isFirstRender) {
     return new Promise((resolve) => {
-      this.setPreloader('block');
+      this.setPreloader(true);
 
       this.mesh = this.__createSphere(this.RADIUS, this.WIDTH, this.HEIGHT);
       this.__uploadTexture(this.room.src, this.mesh).then(() => {
+
         if (isFirstRender) {
           this.factoryButtons();
           
@@ -120,7 +122,7 @@ export default class Room {
 
         this.rotate();
         resolve(this.scene.add(this.mesh));
-        this.setPreloader('none');
+        this.setPreloader(false);
       });
     })
   }

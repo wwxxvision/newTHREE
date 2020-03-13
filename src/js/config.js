@@ -6,7 +6,7 @@ const config = {
   camera: {
     near: 0.1,
     far: 1000,
-    fov: 75
+    fov: 75,
   },
   app:
     [
