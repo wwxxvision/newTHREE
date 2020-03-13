@@ -1,3 +1,5 @@
+import * as THREE from 'three';
+
 export default class Button {
   constructor({ x, y, z, direction }) {
     this.x = x;
@@ -9,5 +11,5 @@ export default class Button {
     this.DEPTH = 2;
     this.mesh = {};
   }
-
+  
 }

@@ -87,7 +87,7 @@ const config = {
               position: {
                 "x": 100,
                 "y": 0,
-                "z": 0
+                "z": 100
               },
             }
           },

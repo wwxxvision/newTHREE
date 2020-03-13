@@ -6,21 +6,10 @@ import User from './user';
 import House from './models/house';
 import TWEEN from 'tween.js';
 
-
 //~~~~~~~ APP ~~~~~~~//
 try {
   class App {
     constructor() {
-      this.scene = new THREE.Scene();
-      this.camera = new THREE.PerspectiveCamera(config.camera.fov, config.camera.aspect, config.camera.near, config.camera.far);
-      this.renderer = new THREE.WebGLRenderer();
-      this.domElement = config.render.domElement;
-      this.renderer.setPixelRatio(window.devicePixelRatio);
-      this.renderer.setSize(window.innerWidth, window.innerHeight);
-      this.domElement.appendChild(this.renderer.domElement);
-      this.raycaster = new THREE.Raycaster();
-      this.mouse = new THREE.Vector2();
-      this.camera.rotateY(Math.PI)
       this.isUserInteracting = false;
       this.onMouseDownMouseX = 0;
       this.onMouseDownMouseY = 0;
@@ -30,10 +19,21 @@ try {
       this.onMouseDownLat = 0;
       this.phi = 0;
       this.theta = 0;
+      this.isMoving = false;
+      this.menuButtons = document.querySelectorAll('.map__point');
+      this.htmlMouse = document.querySelector('.circle');
+
+      this.scene = new THREE.Scene();
+      this.camera = new THREE.PerspectiveCamera(config.camera.fov, window.innerWidth / window.innerHeight, config.camera.near, config.camera.far);
+      this.renderer = new THREE.WebGLRenderer();
+      this.domElement = config.render.domElement;
+      this.renderer.setPixelRatio(window.devicePixelRatio);
+      this.renderer.setSize(window.innerWidth, window.innerHeight);
+      this.domElement.appendChild(this.renderer.domElement);
+      this.raycaster = new THREE.Raycaster();
+      this.mouse = new THREE.Vector3();
       this.camera.target = new THREE.Vector3(0, 0, 0);
       this.user = new User(localStorage);
-      this.menuButtons = document.querySelectorAll('.map__point');
-      this.isMoving = false;
     }
 
     updateTrigger({ x, y, z }) {
@@ -67,13 +67,13 @@ try {
       });
     }
 
-    onPointerStart(event) {
+    onPointerStart(ev) {
       if (!this.isMoving) {
         this.isUserInteracting = true;
       }
 
-      let clientX = event.clientX,
-        clientY = event.clientY;
+      let clientX = ev.clientX,
+        clientY = ev.clientY;
 
       this.onMouseDownMouseX = clientX;
       this.onMouseDownMouseY = clientY;
@@ -83,25 +83,48 @@ try {
     }
 
     setTargetPos(x, y, z) {
-      this.camera.target.set(x, y, z);
+      let animateCamera = {
+        _x: this.camera.target.x,
+        _y: this.camera.target.y,
+        _z: this.camera.target.z
+      }
+
+      new TWEEN.Tween(animateCamera)
+        .to(
+          {
+            _x: x,
+            _y: y,
+            _z: z
+          }, 500
+        )
+        .onUpdate(() => {
+          this.camera.target.set(animateCamera._x, animateCamera._y, animateCamera._z);
+        })
+        .start();
     }
 
-    onPointerMove(event) {
-      let clientX = event.clientX,
-        clientY = event.clientY;
+    onPointerMove(ev) {
+      let clientX = ev.clientX,
+        clientY = ev.clientY;
 
       if (this.isUserInteracting === true) {
-
         this.lon = (this.onMouseDownMouseX - clientX) * 0.1 + this.onMouseDownLon;
         this.lat = (clientY - this.onMouseDownMouseY) * 0.1 + this.onMouseDownLat;
 
         this.lat = Math.max(- 85, Math.min(85, this.lat));
-        this.phi = THREE.MathUtils.degToRad(90 - this.lat);
-        this.theta = THREE.MathUtils.degToRad(this.lon);
+        this.phi = THREE.Math.degToRad(90 - this.lat);
+        this.theta = THREE.Math.degToRad(this.lon);
 
         this.setTargetPos((Math.sin(this.phi) * Math.cos(this.theta)), Math.cos(this.phi), (Math.sin(this.phi) * Math.sin(this.theta)));
       }
 
+      this.mouse.x = (clientX / window.innerWidth) * 2 - 1;
+      this.mouse.y = -(clientY / window.innerHeight) * 2 + 1;
+      this.mouse.z = 0;
+
+
+      this.htmlMouse.style.left = clientX + 'px';
+      this.htmlMouse.style.top = clientY + 'px';
     }
 
     findInConfig(name, subName) {
@@ -117,77 +140,80 @@ try {
       this.switchButtons('on');
     }
 
+    onWindowResize() {
+      this.camera.aspect = window.innerWidth / window.innerHeight;
+      this.camera.updateProjectionMatrix();
+
+      this.renderer.setSize(window.innerWidth, window.innerHeight);
+    }
+    
+    onButton(ev, house) {
+      this.raycaster.setFromCamera(this.mouse, this.camera);
+      let intersects = this.raycaster.intersectObjects(this.scene.children, true);
+
+      if (intersects.length) {
+        intersects.forEach(intersect => {
+          if (intersect.object.name === 'BUTTON') {
+            let direction = intersect.object.userData.direction,
+              buttonPOS = {
+                x: intersect.object.userData.x,
+                y: intersect.object.userData.y,
+                z: intersect.object.userData.z
+              }
+            this.user._update(direction);
+
+            this.isMoving = true;
+            this.switchButtons('off');
+            house.updatePlacement(direction);
+            this.setTab(this.menuButtons, house.placement);
+            house.move(this.updateTrigger.bind(this), buttonPOS, this.camera.target, this.disableMoving.bind(this));
+          }
+        });
+      }
+
+    }
+
+    onTabs(ev, house) {
+      if (!ev.target.classList.contains('active')) {
+        let direction = this.findInConfig(ev.target.dataset.name, ev.target.dataset.subname);
+        if (direction) {
+          house.updatePlacement(direction);
+
+          this.setTab(this.menuButtons, house.placement);
+          this.user._update(direction);
+          house.select();
+        }
+
+        else {
+          throw new Error(`Can't find direction in config`);
+        }
+      }
+    }
+
     init() {
 
       //~~~~~~~ Logic ~~~~~~~//
       let currentPlace = typeof this.user.placement === 'string' ? JSON.parse(this.user.placement) : this.user.placement,
         house = new House(config.app, currentPlace, this.scene);
 
-      this.setTab(this.menuButtons, house.placement);
-      house.factoryRoom();
+      this.setTab(this.menuButtons, house.placement); house.factoryRoom();
 
-      document.addEventListener('mousedown', this.onPointerStart.bind(this), false);
-      document.addEventListener('mousemove', this.onPointerMove.bind(this), false);
-      document.addEventListener('mouseup', this.onPointerUp.bind(this), false);
+      document.addEventListener('mousedown', (ev) => this.onPointerStart(ev));
+      document.addEventListener('mousemove', (ev) => this.onPointerMove(ev, house));
+      document.addEventListener('mouseup', (ev) => this.onPointerUp(ev));
+      document.addEventListener('click', (ev) => this.onButton(ev, house));
+      this.menuButtons.forEach(button => button.addEventListener('click', (ev) => this.onTabs(ev, house)));
 
-      document.addEventListener('touchstart', this.onPointerStart.bind(this), false);
-      document.addEventListener('touchmove', this.onPointerMove.bind(this), false);
-      document.addEventListener('touchend', this.onPointerUp.bind(this), false);
+      document.addEventListener('touchstart', (ev) => this.onPointerStart(ev));
+      document.addEventListener('touchmove', (ev) => this.onPointerMove(ev));
+      document.addEventListener('touchend', (ev) => this.onPointerUp(ev));
 
-      document.addEventListener('click', (e) => {
-        this.mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
-        this.mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
-
-        this.raycaster.setFromCamera(this.mouse, this.camera);
-        let intersects = this.raycaster.intersectObjects(this.scene.children, true);
-
-        if (intersects.length) {
-          intersects.forEach(intersect => {
-            if (intersect.object.name === 'BUTTON') {
-              let direction = intersect.object.userData.direction,
-                buttonPOS = {
-                  x: intersect.object.userData.x,
-                  y: intersect.object.userData.y,
-                  z: intersect.object.userData.z
-                }
-
-
-              this.user._update(direction);
-
-              this.isMoving = true;
-              this.switchButtons('off');
-              house.updatePlacement(direction);
-              this.setTab(this.menuButtons, house.placement);
-              house.move(this.updateTrigger.bind(this), buttonPOS, this.camera.target, this.disableMoving.bind(this));
-            }
-          });
-        }
-      });
-
-      this.menuButtons.forEach(button => {
-        button.addEventListener('click', (e) => {
-          if (!e.target.classList.contains('active')) {
-            let direction = this.findInConfig(e.target.dataset.name, e.target.dataset.subname);
-            if (direction) {
-              house.updatePlacement(direction);
-
-              this.setTab(this.menuButtons, house.placement);
-              this.user._update(direction);
-              house.select();
-            }
-
-            else {
-              throw new Error(`Can't find direction in config`);
-            }
-          }
-        });
-      })
+      window.addEventListener('resize', () => this.onWindowResize());
     }
 
     render() {
       this.camera.lookAt(this.camera.target);
-      requestAnimationFrame(this.render.bind(this));
-
+      requestAnimationFrame(() => this.render());
       this.renderer.render(this.scene, this.camera);
       TWEEN.update();
     }

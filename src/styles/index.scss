@@ -1,7 +1,19 @@
 $ft_teko: 'Teko', sans-serif;
+$wrapp_padding: 10px;
+
+@mixin create_bg($url) {
+  background: url($url) center center no-repeat;
+  background-size: cover;
+}
+
+@mixin set_icon_pos($top, $left) {
+  left: $left;
+  top: $top
+}
+
 
 .animate {
-  transition-duration: 0.5s;
+  transition-duration: 0.2s;
   transition-timing-function: ease-in;
 }
 
@@ -13,6 +25,7 @@ $ft_teko: 'Teko', sans-serif;
 
 body {
   overflow: hidden;
+  cursor: none;
 }
 
 .app {
@@ -21,27 +34,46 @@ body {
 }
 
 .map {
+  height: 200px;
+  width: 300px;
+  @include create_bg('../assets/map.jpg');
+  background-size: cover;
   position: absolute;
-  bottom: 0;
-  left: 0;
+  bottom: $wrapp_padding;
   z-index: 200;
-  font-family: $ft_teko;
-  display: flex;
-  width: 100%;
-  .map__point {
-    font-size: 20px;
+  right: $wrapp_padding;
+  cursor: pointer;
+  visibility: hidden;
+  &.loaded {
+    visibility: visible;
+  }
+  .content {
+    height: 100%;
+    width: 100%;
+    position: relative;
     user-select: none;
-    padding: 10px;
-    color: #fff;
-    @extend .animate;
-    cursor: pointer;
-    &.active {
-      color: #ff0000;
+    border: 1px solid black;
+    .map__point {
+      height: 15px;
+      width: 15px;
+      z-index: 205;
+      position: absolute;
+      transform: scale(1.1);
       @extend .animate;
-    }
-    &:hover {
-      color: #ff0000;
-    }
+      @include create_bg('../assets/disable__icon.png');
+      &.active {
+        @include create_bg('../assets/active__icon.png');
+      }
+      &:hover {
+        transform: scale(2);
+        @extend .animate;
+      }
+      &:nth-child(1) { @include set_icon_pos(6px, 70px) }
+      &:nth-child(2) { @include set_icon_pos(14px, 100px) }
+      &:nth-child(3) { @include set_icon_pos(34px, 95px) }
+      &:nth-child(4) { @include set_icon_pos(45px, 105px) }
+      &:nth-child(5) { @include set_icon_pos(65px, 110px) }
+     }
   }
 }
 
@@ -50,8 +82,17 @@ body {
   position: absolute;
   height: 100%;
   width: 100%;
-  z-index: 200;
+  z-index: 210;
   background-image: url('../assets/preloader.gif');
   background-repeat: no-repeat;
   background-position: center center;
+}
+
+.circle {
+  height: 10px;
+  width: 10px;
+  background-color: #000000;
+  border-radius:  50%;
+  z-index:  200;
+  position: absolute;
 }

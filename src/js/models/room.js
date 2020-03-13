@@ -8,9 +8,10 @@ export default class Room {
     this.scene = scene;
     this.WIDTH = 60;
     this.HEIGHT = 40;
-    this.RADIUS = 500;
+    this.RADIUS =  270;
     this.mesh = {};
     this.PRELOADER = document.querySelector('.preloader');
+    this.MAP =  document.querySelector('.map');
   }
 
   validate(val) {
@@ -63,7 +64,7 @@ export default class Room {
 
   __createBox(width, height, depth) {
     const geometry = new THREE.BoxGeometry(width, height, depth),
-      material = new THREE.MeshBasicMaterial({ color: 0x00ff00 }),
+      material = new THREE.MeshBasicMaterial({ color: 0xffffff }),
       mesh = new THREE.Mesh(geometry, material);
 
     mesh.name = 'BUTTON';
@@ -103,17 +104,24 @@ export default class Room {
   }
 
   render(isFirstRender) {
-    this.setPreloader('block');
+    return new Promise((resolve) => {
+      this.setPreloader('block');
 
-    this.mesh = this.__createSphere(this.RADIUS, this.WIDTH, this.HEIGHT);
-    this.__uploadTexture(this.room.src, this.mesh).then(() => {
-      if (isFirstRender) {
-        this.factoryButtons();
-      }
-      this.rotate();
-      this.scene.add(this.mesh);
-      this.setPreloader('none');
-    });
+      this.mesh = this.__createSphere(this.RADIUS, this.WIDTH, this.HEIGHT);
+      this.__uploadTexture(this.room.src, this.mesh).then(() => {
+        if (isFirstRender) {
+          this.factoryButtons();
+          
+          if (!this.MAP.classList.contains('.loaded')) {
+            this.MAP.classList.add('loaded');
+          }
+        }
+
+        this.rotate();
+        resolve(this.scene.add(this.mesh));
+        this.setPreloader('none');
+      });
+    })
   }
 
 }
