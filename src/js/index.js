@@ -63,7 +63,7 @@ try {
     }
 
     setTargetPos(x, y, z) {
-      new TWEEN.Tween(this.camera.target).to(new THREE.Vector3(x, y, z), 200).start();
+      new TWEEN.Tween(this.camera.target).to(new THREE.Vector3(x, y, z), 100).start();
     }
 
     onPointerStart(ev) {
@@ -104,7 +104,7 @@ try {
         this.phi = THREE.Math.degToRad(90 - this.lat);
         this.theta = THREE.Math.degToRad(this.lon);
 
-        this.setTargetPos((Math.sin(this.phi) * Math.cos(this.theta)), Math.cos(this.phi), (Math.sin(this.phi) * Math.sin(this.theta)), true);
+        this.setTargetPos((Math.sin(this.phi) * Math.cos(this.theta)), Math.cos(this.phi), (Math.sin(this.phi) * Math.sin(this.theta)));
       }
 
       this.mouse.x = (clientX / window.innerWidth) * 2 - 1;
