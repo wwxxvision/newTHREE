@@ -62,7 +62,7 @@ try {
       });
     }
 
-    setTargetPos(x, y, z, diff) {
+    setTargetPos(x, y, z) {
       this.camera.target.set(x, y, z);
 
     }
@@ -94,7 +94,6 @@ try {
     }
 
     onPointerMove(ev) {
-
       let clientX = ev.clientX,
         clientY = ev.clientY;
 
@@ -108,12 +107,6 @@ try {
         this.lat = Math.max(- 85, Math.min(85, this.lat));
         this.phi = THREE.Math.degToRad(90 - this.lat);
         this.theta = THREE.Math.degToRad(this.lon);
-
-        this.saveTarget = {
-          x: (Math.sin(this.phi) * Math.cos(this.theta)),
-          y: Math.cos(this.phi),
-          z: (Math.sin(this.phi) * Math.sin(this.theta))
-        }
 
         this.setTargetPos((Math.sin(this.phi) * Math.cos(this.theta)),  Math.cos(this.phi), (Math.sin(this.phi) * Math.sin(this.theta)));
       }
