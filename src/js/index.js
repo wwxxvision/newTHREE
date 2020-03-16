@@ -107,6 +107,7 @@ try {
         clientY = ev.clientY;
 
       if (this.isUserInteracting === true) {
+
         let eventCurrentTime = new Date();
         this.diffTime = (eventCurrentTime - this.eventTimeStart);
 
@@ -115,8 +116,11 @@ try {
 
         let percentOfWidthAction = ((deltaX < 0 ? -deltaX : deltaX) / window.innerWidth) * 100;
 
-        if (percentOfWidthAction > 45) {
+        if (percentOfWidthAction > 25) {
           this.actionDelta  = 1; // ???????????
+        }
+        else {
+          this.actionDelta = 0;
         }
 
         if (this.diffTime < 0) { this.diffTime = - (this.diffTime); }
@@ -213,7 +217,7 @@ try {
     }
 
     updatePosing() {
-      if (this.lengtAction) {
+      if (this.actionDelta) {
   
       }
       else {
