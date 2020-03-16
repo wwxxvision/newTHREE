@@ -37,6 +37,12 @@ try {
       this.user = new User(localStorage);
       this.scene.background = new THREE.Color('0xffffff');
       this.pointerOnButton = false;
+      this.eventTimeStart = 0;
+      this.diffTime = 0;
+      this.saveTarget = { x: 0, y: 0, z: 1 };
+      this.actionDelta = 0;
+
+      // this.event
     }
 
     updateTrigger({ x, y, z }) {
@@ -62,14 +68,17 @@ try {
       });
     }
 
-    setTargetPos(x, y, z) {
-      new TWEEN.Tween(this.camera.target).to(new THREE.Vector3(x, y, z), 100).start();
+    setTargetPos(x, y, z, diff) {
+      this.camera.target.set(x, y, z);
+
     }
 
     onPointerStart(ev) {
       if (!this.isMoving) {
         this.isUserInteracting = true;
       }
+
+      this.eventTimeStart = new Date();
 
       let clientX = ev.clientX,
         clientY = ev.clientY;
@@ -93,18 +102,37 @@ try {
     }
 
     onPointerMove(ev) {
+
       let clientX = ev.clientX,
         clientY = ev.clientY;
 
       if (this.isUserInteracting === true) {
-        this.lon = (this.onMouseDownMouseX - clientX) * 0.1 + this.onMouseDownLon;
-        this.lat = (clientY - this.onMouseDownMouseY) * 0.1 + this.onMouseDownLat;
+        let eventCurrentTime = new Date();
+        this.diffTime = (eventCurrentTime - this.eventTimeStart);
+
+        let deltaX = (this.onMouseDownMouseX - clientX),
+        deltaY = clientY - this.onMouseDownMouseY;
+
+        let percentOfWidthAction = ((deltaX < 0 ? -deltaX : deltaX) / window.innerWidth) * 100;
+
+        if (percentOfWidthAction > 45) {
+          this.actionDelta  = 1; // ???????????
+        }
+
+        if (this.diffTime < 0) { this.diffTime = - (this.diffTime); }
+
+        this.lon = deltaX * 0.1 + this.onMouseDownLon;
+        this.lat = deltaY * 0.1 + this.onMouseDownLat;
 
         this.lat = Math.max(- 85, Math.min(85, this.lat));
         this.phi = THREE.Math.degToRad(90 - this.lat);
         this.theta = THREE.Math.degToRad(this.lon);
 
-        this.setTargetPos((Math.sin(this.phi) * Math.cos(this.theta)), Math.cos(this.phi), (Math.sin(this.phi) * Math.sin(this.theta)));
+        this.saveTarget = {
+          x: (Math.sin(this.phi) * Math.cos(this.theta)),
+          y: Math.cos(this.phi),
+          z: (Math.sin(this.phi) * Math.sin(this.theta))
+        }
       }
 
       this.mouse.x = (clientX / window.innerWidth) * 2 - 1;
@@ -184,9 +212,19 @@ try {
       this.camera.target.normalize();
     }
 
-    render() {
+    updatePosing() {
+      if (this.lengtAction) {
+  
+      }
+      else {
+        this.setTargetPos(this.saveTarget.x, this.saveTarget.y, this.saveTarget.z);
+      }
+    }
+
+    render(time) {
+      this.updatePosing()
       this.camera.lookAt(this.camera.target);
-      requestAnimationFrame(() => this.render());
+      requestAnimationFrame((time) => this.render(time));
       this.renderer.render(this.scene, this.camera);
       TWEEN.update();
     }
