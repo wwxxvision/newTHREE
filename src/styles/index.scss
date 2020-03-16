@@ -25,7 +25,6 @@ $wrapp_padding: 10px;
   top: $top
 }
 
-
 * {box-sizing:  border-box; padding: 0; margin: 0; }
 
 body {
@@ -54,10 +53,10 @@ body {
   background-size: cover;
   position: absolute;
   bottom: $wrapp_padding;
-  z-index: 230;
   right: $wrapp_padding;
   cursor: pointer;
   visibility: hidden;
+  z-index: 230;
   @extend .animate;
   &.loaded {
     visibility: visible;
@@ -77,6 +76,7 @@ body {
       height: 15px;
       width: 15px;
       z-index: 220;
+      transition-duration: 0.6s;
       position: absolute;
       transform: scale(1.1);
       @extend .animate;
@@ -110,6 +110,7 @@ body {
   align-items: center;
   font-family: $ft_teko;
   font-size: 18px;
+  user-select: none;
 }
 
 .circle {

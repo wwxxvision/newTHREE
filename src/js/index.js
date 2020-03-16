@@ -32,13 +32,14 @@ try {
       this.domElement.appendChild(this.renderer.domElement);
       this.raycaster = new THREE.Raycaster();
       this.mouse = new THREE.Vector3();
-      this.camera.target = new THREE.Vector3(1, 0, 0);
+      this.camera.target = new THREE.Vector3(0, 0, 1);
+      this.camera.useQuaternion = true;
       this.user = new User(localStorage);
       this.scene.background = new THREE.Color('0xffffff');
     }
 
     updateTrigger({ x, y, z }) {
-      this.setTargetPos(x, y, z, false);
+      this.camera.target.set(x, y, z);
     }
 
     switchButtons(mode) {
@@ -75,36 +76,14 @@ try {
       this.onMouseDownLat = this.lat;
     }
 
-    setTargetPos(x, y, z, withAnimate) {
-      if (withAnimate) {
-        let animateCamera = {
-          _x: this.camera.target.x,
-          _y: this.camera.target.y,
-          _z: this.camera.target.z
-        }
-
-        new TWEEN.Tween(animateCamera)
-          .to(
-            {
-              _x: x,
-              _y: y,
-              _z: z
-            }, 250
-          )
-          .easing(TWEEN.Easing.Quadratic.InOut)
-          .onUpdate(() => {
-            this.camera.target.set(animateCamera._x, animateCamera._y, animateCamera._z);
-          })
-          .start();
-      }
-      else {
-        this.camera.target.set(x, y, z);
-      }
+    setTargetPos(x, y, z) {
+      new TWEEN.Tween(this.camera.target).to(new THREE.Vector3(x, y ,z), 200).start();
     }
 
     onPointerMove(ev) {
       let clientX = ev.clientX,
         clientY = ev.clientY;
+
 
       if (this.isUserInteracting === true) {
         this.lon = (this.onMouseDownMouseX - clientX) * 0.1 + this.onMouseDownLon;
@@ -123,14 +102,15 @@ try {
 
       this.htmlMouse.style.left = clientX + 'px';
       this.htmlMouse.style.top = clientY + 'px';
-    }
 
-    findInConfig(name, subName) {
-      return config.app.find(roomFounding => roomFounding.name === name && roomFounding.subName === subName);
     }
 
     onPointerUp() {
       this.isUserInteracting = false;
+    }
+
+    findInConfig(name, subName) {
+      return config.app.find(roomFounding => roomFounding.name === name && roomFounding.subName === subName);
     }
 
     disableMoving() {
@@ -188,6 +168,11 @@ try {
       }
     }
 
+    targetUpdateQuaternion(quaternion) {
+      this.camera.target.applyQuaternion(quaternion);
+      this.camera.target.normalize();
+    }
+
     render() {
       this.camera.lookAt(this.camera.target);
       requestAnimationFrame(() => this.render());
@@ -195,21 +180,17 @@ try {
       TWEEN.update();
     }
 
-    targetUpdateQuaternion(quaternion) {
-      this.camera.target.normalize();
-      this.camera.target.applyQuaternion(quaternion);
-    }
-
     init() {
       //~~~~~~~ Logic ~~~~~~~//
       let currentPlace = typeof this.user.placement === 'string' ? JSON.parse(this.user.placement) : this.user.placement,
-        house = new House(config.app, currentPlace, this.scene,  this.targetUpdateQuaternion.bind(this));
+        house = new House(config.app, currentPlace, this.scene, this.targetUpdateQuaternion.bind(this));
 
       this.setTab(this.mapButtons, house.placement); house.factoryRoom();
-      
+
       document.addEventListener('mousedown', (ev) => this.onPointerStart(ev));
+      document.addEventListener('mouseenter', (ev) => this.onPointerMove(ev, house));
       document.addEventListener('mousemove', (ev) => this.onPointerMove(ev, house));
-      document.addEventListener('mouseup', () => this.onPointerUp());
+      document.addEventListener('mouseup', (ev) => this.onPointerUp(ev));
       document.addEventListener('click', () => this.onButton(house));
       this.mapButtons.forEach(button => button.addEventListener('click', (ev) => this.onTabs(ev, house)));
 

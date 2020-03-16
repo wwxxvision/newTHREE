@@ -19,7 +19,7 @@ const optimization = () => {
     ]
   }
 }
-
+// NEED .env config !!
 require('dotenv').config();
 
 let isDEV = process.env.NODE_ENV === 'development' ? true : false;
