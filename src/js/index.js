@@ -115,8 +115,6 @@ try {
       this.mouse.y = -(clientY / window.innerHeight) * 2 + 1;
       this.mouse.z = 0;
 
-      this.htmlMouse.style.left = clientX + 'px';
-      this.htmlMouse.style.top = clientY + 'px';
     }
 
     onPointerUp() {

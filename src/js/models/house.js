@@ -126,7 +126,6 @@ export default class House {
 
     this.initialedRoom.removedRoom();
     this.initialedRoom = hiddenSphere;
-
   }
 }
 
