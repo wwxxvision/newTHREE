@@ -114,16 +114,9 @@ try {
         let deltaX = (this.onMouseDownMouseX - clientX),
         deltaY = clientY - this.onMouseDownMouseY;
 
-        let percentOfWidthAction = ((deltaX < 0 ? -deltaX : deltaX) / window.innerWidth) * 100;
-
-        if (percentOfWidthAction > 25) {
-          this.actionDelta  = 1; // ???????????
-        }
-        else {
-          this.actionDelta = 0;
-        }
-
         if (this.diffTime < 0) { this.diffTime = - (this.diffTime); }
+
+        this.diffTime < 400 ? this.actionDelta = 1 : this.actionDelta = 0;
 
         this.lon = deltaX * 0.1 + this.onMouseDownLon;
         this.lat = deltaY * 0.1 + this.onMouseDownLat;
