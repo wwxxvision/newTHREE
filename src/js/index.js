@@ -36,6 +36,7 @@ try {
       this.camera.useQuaternion = true;
       this.user = new User(localStorage);
       this.scene.background = new THREE.Color('0xffffff');
+      this.pointerOnButton = false;
     }
 
     updateTrigger({ x, y, z }) {
@@ -61,6 +62,10 @@ try {
       });
     }
 
+    setTargetPos(x, y, z) {
+      new TWEEN.Tween(this.camera.target).to(new THREE.Vector3(x, y, z), 200).start();
+    }
+
     onPointerStart(ev) {
       if (!this.isMoving) {
         this.isUserInteracting = true;
@@ -74,16 +79,22 @@ try {
 
       this.onMouseDownLon = this.lon;
       this.onMouseDownLat = this.lat;
-    }
 
-    setTargetPos(x, y, z) {
-      new TWEEN.Tween(this.camera.target).to(new THREE.Vector3(x, y ,z), 200).start();
+      this.raycaster.setFromCamera(this.mouse, this.camera);
+      let intersects = this.raycaster.intersectObjects(this.scene.children, true);
+
+      if (intersects.length) {
+        intersects.forEach(intersect => {
+          if (intersect.object.name === 'BUTTON') {
+            this.pointerOnButton = true;
+          }
+        });
+      }
     }
 
     onPointerMove(ev) {
       let clientX = ev.clientX,
         clientY = ev.clientY;
-
 
       if (this.isUserInteracting === true) {
         this.lon = (this.onMouseDownMouseX - clientX) * 0.1 + this.onMouseDownLon;
@@ -102,7 +113,6 @@ try {
 
       this.htmlMouse.style.left = clientX + 'px';
       this.htmlMouse.style.top = clientY + 'px';
-
     }
 
     onPointerUp() {
@@ -129,7 +139,7 @@ try {
       this.raycaster.setFromCamera(this.mouse, this.camera);
       let intersects = this.raycaster.intersectObjects(this.scene.children, true);
 
-      if (intersects.length) {
+      if (intersects.length && this.pointerOnButton) {
         intersects.forEach(intersect => {
           if (intersect.object.name === 'BUTTON') {
             let direction = intersect.object.userData.direction,
@@ -149,6 +159,7 @@ try {
         });
       }
 
+      this.pointerOnButton = false;
     }
 
     onTabs(ev, house) {
