@@ -37,12 +37,6 @@ try {
       this.user = new User(localStorage);
       this.scene.background = new THREE.Color('0xffffff');
       this.pointerOnButton = false;
-      this.eventTimeStart = 0;
-      this.diffTime = 0;
-      this.saveTarget = { x: 0, y: 0, z: 1 };
-      this.actionDelta = 0;
-
-      // this.event
     }
 
     updateTrigger({ x, y, z }) {
@@ -78,8 +72,6 @@ try {
         this.isUserInteracting = true;
       }
 
-      this.eventTimeStart = new Date();
-
       let clientX = ev.clientX,
         clientY = ev.clientY;
 
@@ -107,16 +99,8 @@ try {
         clientY = ev.clientY;
 
       if (this.isUserInteracting === true) {
-
-        let eventCurrentTime = new Date();
-        this.diffTime = (eventCurrentTime - this.eventTimeStart);
-
         let deltaX = (this.onMouseDownMouseX - clientX),
         deltaY = clientY - this.onMouseDownMouseY;
-
-        if (this.diffTime < 0) { this.diffTime = - (this.diffTime); }
-
-        this.diffTime < 400 ? this.actionDelta = 1 : this.actionDelta = 0;
 
         this.lon = deltaX * 0.1 + this.onMouseDownLon;
         this.lat = deltaY * 0.1 + this.onMouseDownLat;
@@ -130,6 +114,8 @@ try {
           y: Math.cos(this.phi),
           z: (Math.sin(this.phi) * Math.sin(this.theta))
         }
+
+        this.setTargetPos((Math.sin(this.phi) * Math.cos(this.theta)),  Math.cos(this.phi), (Math.sin(this.phi) * Math.sin(this.theta)));
       }
 
       this.mouse.x = (clientX / window.innerWidth) * 2 - 1;
@@ -209,17 +195,7 @@ try {
       this.camera.target.normalize();
     }
 
-    updatePosing() {
-      if (this.actionDelta) {
-  
-      }
-      else {
-        this.setTargetPos(this.saveTarget.x, this.saveTarget.y, this.saveTarget.z);
-      }
-    }
-
-    render(time) {
-      this.updatePosing()
+    render() {
       this.camera.lookAt(this.camera.target);
       requestAnimationFrame((time) => this.render(time));
       this.renderer.render(this.scene, this.camera);
