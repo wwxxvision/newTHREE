@@ -1,20 +1,6 @@
 $ft_teko: 'Teko', sans-serif;
 $wrapp_padding: 10px;
 
-@keyframes animate_circle {
-  from {
-    transform: scale(0);
-  }25% {
-    transform: scale(1.4);
-  }50% {
-    transform: scale(1.8);
-  }75% {
-    transform: scale(1.4);
-  }to {
-    transform: scale(0);
-  }
-}
-
 @mixin create_bg($url) {
   background: url($url) center center no-repeat;
   background-size: cover;
@@ -118,27 +104,4 @@ body {
   font-family: $ft_teko;
   font-size: 18px;
   user-select: none;
-}
-
-.circle {
-  height: 10px;
-  width: 10px;
-  background-color: #000000;
-  border-radius:  50%;
-  z-index:  205;
-  position: absolute;
-  &.loading {
-    &::after {
-      display: block;
-      height: 10px;
-      width: 10px;
-      z-index: 204;
-      background-color: #ff0000;
-      border-radius: 50%;
-      content: '';
-      opacity: 0.6;
-      transform: scale(1.5);
-      animation: animate_circle 0.5s ease-in infinite;
-    }
-  }
 }

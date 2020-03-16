@@ -25,7 +25,6 @@ export default class Room {
 
   setPreloader(type) {
     this.PRELOADER.style.display = type ? 'flex' : 'none';
-    type ? document.querySelector('.circle').classList.add('loading') : document.querySelector('.circle').classList.remove('loading');
   }
 
   __delete3d(arg) {

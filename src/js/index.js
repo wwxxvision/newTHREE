@@ -21,7 +21,6 @@ try {
       this.theta = 0;
       this.isMoving = false;
       this.mapButtons = document.querySelectorAll('.map__point');
-      this.htmlMouse = document.querySelector('.circle');
 
       this.scene = new THREE.Scene();
       this.camera = new THREE.PerspectiveCamera(config.camera.fov, window.innerWidth / window.innerHeight, config.camera.near, config.camera.far);
